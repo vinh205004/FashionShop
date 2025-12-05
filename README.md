@@ -1,6 +1,6 @@
 # 🌐 Project
 
-Dự án frontend sử dụng **React + Vite + TailwindCSS**.
+Frontend sử dụng **React + Vite + TailwindCSS**.
 
 📁 Cấu trúc thư mục
 src/
@@ -18,3 +18,5 @@ src/
 ⚡ Vite
 🎨 TailwindCSS
 🧩 TypeScript
+
+Backend sử dụng ASP.NET Core Web API 8
