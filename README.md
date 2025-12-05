@@ -1,4 +1,4 @@
-# 🌐 FrontEnd Project
+# 🌐 Project
 
 Dự án frontend sử dụng **React + Vite + TailwindCSS**.
 
