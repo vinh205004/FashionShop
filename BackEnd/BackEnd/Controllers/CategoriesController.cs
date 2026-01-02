@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BackEnd.Models;
+using Microsoft.AspNetCore.Authorization; // 👈 1. Import thư viện bảo mật
 
 namespace BackEnd.Controllers
 {
@@ -21,13 +22,13 @@ namespace BackEnd.Controllers
         }
 
         // GET: api/Categories
+        // API này CÔNG KHAI (Public) để trang chủ hiển thị Menu
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
         {
             return await _context.Categories
-                // Nối bảng trung gian
+                // Giữ nguyên logic join bảng của bạn để hiển thị menu đa cấp
                 .Include(c => c.CategorySubCategories)
-                    // Nối tiếp sang bảng SubCategory đích
                     .ThenInclude(cs => cs.SubCategory)
                 .ToListAsync();
         }
@@ -47,8 +48,9 @@ namespace BackEnd.Controllers
         }
 
         // PUT: api/Categories/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // 🔥 BẢO MẬT: Chỉ Admin được sửa
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutCategory(int id, Category category)
         {
             if (id != category.CategoryId)
@@ -76,10 +78,27 @@ namespace BackEnd.Controllers
 
             return NoContent();
         }
+        // GET: api/Categories/1/subcategories
+        // Lấy danh sách danh mục con dựa trên ID danh mục cha
+        [HttpGet("{categoryId}/subcategories")]
+        public async Task<IActionResult> GetSubCategoriesByCategoryId(int categoryId)
+        {
+            var subs = await _context.CategorySubCategories
+                .Where(csc => csc.CategoryId == categoryId)
+                .Select(csc => new
+                {
+                    csc.SubCategory.SubCategoryId,
+                    csc.SubCategory.SubCategoryName,
+                    csc.SubCategory.SubCategoryCode
+                })
+                .ToListAsync();
 
+            return Ok(subs);
+        }
         // POST: api/Categories
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // 🔥 BẢO MẬT: Chỉ Admin được thêm mới
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Category>> PostCategory(Category category)
         {
             _context.Categories.Add(category);
@@ -89,7 +108,9 @@ namespace BackEnd.Controllers
         }
 
         // DELETE: api/Categories/5
+        // 🔥 BẢO MẬT: Chỉ Admin được xóa
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
             var category = await _context.Categories.FindAsync(id);

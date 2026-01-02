@@ -23,28 +23,39 @@ interface AuthContextType {
   isAuthenticated: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   updateUser: (userData: any) => void;
+  isLoading: boolean; // <--- 1. THÊM STATE NÀY
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  
+  // 2. Mặc định là ĐANG TẢI (true) để chặn App chạy lung tung khi chưa đọc xong LocalStorage
+  const [isLoading, setIsLoading] = useState(true); 
+  
   const { addToast } = useToast();
 
   // Load user từ LocalStorage khi F5
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (error) {
-        console.error("Dữ liệu user lỗi, reset...", error);
-        localStorage.removeItem("user");
-        localStorage.removeItem("token");
-        localStorage.removeItem("userId");
-        setUser(null);
+    const loadUser = async () => {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        try {
+          setUser(JSON.parse(storedUser));
+        } catch (error) {
+          console.error("Dữ liệu user lỗi, reset...", error);
+          localStorage.removeItem("user");
+          localStorage.removeItem("token");
+          localStorage.removeItem("userId");
+          setUser(null);
+        }
       }
-    }
+      // 3. Đọc xong xuôi thì mới tắt Loading
+      setIsLoading(false); 
+    };
+
+    loadUser();
   }, []);
 
   // Hàm Login
@@ -106,8 +117,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     window.location.href = "/login";
   };
 
+  // 4. QUAN TRỌNG: Nếu đang đọc LocalStorage thì hiện màn hình chờ
+  // Chặn không cho AdminRoute chạy khi user đang là null "tạm thời"
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p className="text-gray-600">Đang tải dữ liệu...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <AuthContext.Provider value={{ user, login, register, updateUser, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, login, register, updateUser, logout, isAuthenticated: !!user, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

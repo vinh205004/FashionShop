@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BackEnd.Models;
+using Microsoft.AspNetCore.Authorization;
+using BackEnd.DTOs;
 
 namespace BackEnd.Controllers
 {
@@ -149,36 +151,64 @@ namespace BackEnd.Controllers
 
             return product;
         }
-
-        // PUT: api/Products/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(int id, Product product)
+        // GET: api/Products/subcategories
+        // Lấy tất cả danh mục con để Frontend tự lọc
+        [HttpGet("subcategories")]
+        public async Task<IActionResult> GetAllSubCategories()
         {
-            if (id != product.ProductId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(product).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProductExists(id))
+            var subs = await _context.SubCategories
+                // Cần join bảng CategorySubCategories để biết Sub này thuộc Cha nào
+                .SelectMany(s => s.CategorySubCategories.Select(csc => new
                 {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+                    s.SubCategoryId,
+                    s.SubCategoryName,
+                    csc.CategoryId // Quan trọng: Để Frontend biết mà lọc
+                }))
+                .ToListAsync();
 
-            return NoContent();
+            return Ok(subs);
+        }
+        // PUT: api/Products/update/5
+        [HttpPut("update/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductCreateDto model)
+        {
+            var product = await _context.Products
+                .Include(p => p.ProductImages)
+                .Include(p => p.ProductSizes)
+                .Include(p => p.ProductBadges)
+                .FirstOrDefaultAsync(p => p.ProductId == id);
+
+            if (product == null) return NotFound("Không tìm thấy sản phẩm");
+
+            // 1. Update thông tin cơ bản
+            product.Title = model.Title;
+            product.Price = model.Price;
+            product.Description = model.Description;
+            product.CategoryId = model.CategoryId;
+            product.SubCategoryId = model.SubCategoryId;
+
+            // 2. Xóa dữ liệu cũ (Ảnh, Size, Badge) để thêm lại cái mới
+            // (Cách này đơn giản nhất, tuy nhiên thực tế nên check diff để tối ưu)
+            _context.ProductImages.RemoveRange(product.ProductImages);
+            _context.ProductSizes.RemoveRange(product.ProductSizes);
+            _context.ProductBadges.RemoveRange(product.ProductBadges);
+
+            // 3. Thêm dữ liệu mới (Giống hệt hàm Create)
+            if (model.Images != null)
+                foreach (var img in model.Images)
+                    product.ProductImages.Add(new ProductImage { ImageUrl = img, IsMain = model.Images.IndexOf(img) == 0 });
+
+            if (model.Sizes != null)
+                foreach (var s in model.Sizes)
+                    product.ProductSizes.Add(new ProductSize { SizeName = s });
+
+            if (model.Badges != null)
+                foreach (var b in model.Badges)
+                    product.ProductBadges.Add(new ProductBadge { BadgeName = b });
+
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Cập nhật thành công!" });
         }
 
         // POST: api/Products
@@ -225,5 +255,99 @@ namespace BackEnd.Controllers
 
             return Ok(sizes);
         }
+        // POST: api/Products/create
+        [HttpPost("create")]
+        [Authorize(Roles = "Admin")] // 🔥 Chỉ Admin mới được thêm
+        public async Task<IActionResult> CreateProduct([FromBody] ProductCreateDto model)
+        {
+            // 1. Validate dữ liệu cơ bản
+            if (model == null) return BadRequest("Dữ liệu không hợp lệ");
+
+            // 2. Tạo đối tượng Product chính
+            var newProduct = new Product
+            {
+                Title = model.Title,
+                Price = model.Price,
+                Description = model.Description,
+                CategoryId = model.CategoryId,
+                SubCategoryId = model.SubCategoryId,
+
+                // Mặc định tạo ảnh rỗng để tránh lỗi null nếu frontend không gửi
+                ProductImages = new List<ProductImage>(),
+                ProductSizes = new List<ProductSize>(),
+                ProductBadges = new List<ProductBadge>()
+            };
+
+            // 3. Xử lý Ảnh (Product Images)
+            if (model.Images != null && model.Images.Count > 0)
+            {
+                foreach (var imgUrl in model.Images)
+                {
+                    newProduct.ProductImages.Add(new ProductImage
+                    {
+                        ImageUrl = imgUrl,
+                        IsMain = (model.Images.IndexOf(imgUrl) == 0) // Ảnh đầu tiên là ảnh chính
+                    });
+                }
+            }
+
+            // 4. Xử lý Size (Product Sizes)
+            if (model.Sizes != null && model.Sizes.Count > 0)
+            {
+                foreach (var size in model.Sizes)
+                {
+                    newProduct.ProductSizes.Add(new ProductSize
+                    {
+                        SizeName = size
+                    });
+                }
+            }
+
+            // 5. Xử lý Badge (Product Badges)
+            if (model.Badges != null && model.Badges.Count > 0)
+            {
+                foreach (var badge in model.Badges)
+                {
+                    newProduct.ProductBadges.Add(new ProductBadge
+                    {
+                        BadgeName = badge
+                    });
+                }
+            }
+
+            // 6. Lưu vào Database
+            try
+            {
+                _context.Products.Add(newProduct);
+                await _context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    message = "Thêm sản phẩm thành công!",
+                    productId = newProduct.ProductId
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Lỗi server: " + ex.Message);
+            }
+        }
+        // GET: api/Products/categories
+        // ---------------------------------------------------------
+        [HttpGet("categories")]
+        public async Task<IActionResult> GetCategories()
+        {
+            var categories = await _context.Categories
+                .Select(c => new
+                {
+                    c.CategoryId,
+                    c.CategoryName,
+                    c.CategoryCode
+                })
+                .ToListAsync();
+
+            return Ok(categories);
+        }
     }
+   
 }

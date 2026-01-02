@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.OpenApi.Models; // Thêm cái này để cấu hình Swagger
+using Microsoft.OpenApi.Models;
 
 namespace BackEnd
 {
@@ -14,11 +14,11 @@ namespace BackEnd
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // --- 1. CẤU HÌNH JWT ---
+            // ==========================================
+            // 1. CẤU HÌNH JWT (XÁC THỰC)
+            // ==========================================
             var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
-
-            // Kiểm tra null để tránh lỗi crash nếu quên cấu hình appsettings
-            if (jwtSettings == null) throw new Exception("Chưa cấu hình JwtSettings trong appsettings.json");
+            if (jwtSettings == null) throw new Exception("⚠️ Lỗi: Chưa cấu hình JwtSettings trong appsettings.json");
 
             builder.Services.AddAuthentication(options =>
             {
@@ -40,40 +40,48 @@ namespace BackEnd
 
             builder.Services.AddAuthorization();
 
-            // --- 2. CẤU HÌNH CORS ---
+            // ==========================================
+            // 2. CẤU HÌNH CORS (CHO PHÉP REACT GỌI API)
+            // ==========================================
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowAll", builder =>
+                options.AddDefaultPolicy(policy =>
                 {
-                    builder.AllowAnyOrigin()
-                           .AllowAnyMethod()
-                           .AllowAnyHeader();
+                    // Cho phép đúng địa chỉ của React (Frontend)
+                    policy.WithOrigins("http://localhost:5173")
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
                 });
             });
 
-            // --- 3. KẾT NỐI SQL SERVER (Lấy từ appsettings.json) ---
-            // Thay vì viết cứng, hãy đọc từ file cấu hình cho chuyên nghiệp
+            // ==========================================
+            // 3. KẾT NỐI DATABASE
+            // ==========================================
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-                                   ?? "Server=ADMIN-PC\\MSSQLSERVER22;Database=FashionShopDB;Trusted_Connection=True;TrustServerCertificate=True;";
+                ?? "Server=ADMIN-PC\\MSSQLSERVER22;Database=FashionShopDB;Trusted_Connection=True;TrustServerCertificate=True;";
 
             builder.Services.AddDbContext<FashionShopDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
-            // --- 4. FIX LỖI LOOP JSON ---
+            // ==========================================
+            // 4. FIX LỖI LOOP JSON & CONTROLLERS
+            // ==========================================
             builder.Services.AddControllers().AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
             builder.Services.AddEndpointsApiExplorer();
 
-            // --- 5. CẤU HÌNH SWAGGER CÓ NÚT AUTHORIZE (Quan Trọng) ---
+            // ==========================================
+            // 5. CẤU HÌNH SWAGGER (CÓ NÚT NHẬP TOKEN)
+            // ==========================================
             builder.Services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "FashionShop API", Version = "v1" });
 
-                // Định nghĩa bảo mật Bearer
+                // Định nghĩa nút Authorize (Ổ khóa)
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    Description = "Nhập token vào đây: Bearer {token}",
+                    Description = "Nhập token theo cú pháp: Bearer {token}",
                     Name = "Authorization",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey,
@@ -98,8 +106,12 @@ namespace BackEnd
 
             var app = builder.Build();
 
-            // --- PIPELINE ---
-            app.UseCors("AllowAll"); // CORS phải đứng đầu
+            // ==========================================
+            // 6. PIPELINE (LUỒNG XỬ LÝ)
+            // ==========================================
+
+            // 1. CORS phải đứng đầu để chặn/cho phép ngay từ cửa
+            app.UseCors();
 
             if (app.Environment.IsDevelopment())
             {
@@ -109,8 +121,13 @@ namespace BackEnd
 
             app.UseHttpsRedirection();
 
-            app.UseAuthentication(); // Xác thực (Bạn là ai?)
-            app.UseAuthorization();  // Phân quyền (Bạn được làm gì?)
+            // 2. Cho phép truy cập ảnh tĩnh (trong folder wwwroot)
+            // Cần thiết cho tính năng hiển thị ảnh sản phẩm sau này
+            app.UseStaticFiles();
+
+            // 3. Xác thực & Phân quyền
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.MapControllers();
 
