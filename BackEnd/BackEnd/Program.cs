@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace BackEnd
 {
@@ -13,7 +14,11 @@ namespace BackEnd
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            // ==========================================
+            // 0. QUAN TRỌNG: NGĂN .NET ĐỔI TÊN CLAIM
+            // ==========================================
+            // Dòng này giúp giữ nguyên tên claim là "UserId" thay vì bị đổi thành đường dẫn dài ngoằng
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             // ==========================================
             // 1. CẤU HÌNH JWT (XÁC THỰC)
             // ==========================================

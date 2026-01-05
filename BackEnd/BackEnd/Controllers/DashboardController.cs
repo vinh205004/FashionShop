@@ -7,7 +7,7 @@ namespace BackEnd.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")] // 🔥 Chỉ Admin mới được gọi
+    [Authorize(Roles = "Admin")] // 🔥 Chỉ Admin mới được xem
     public class DashboardController : ControllerBase
     {
         private readonly FashionShopDbContext _context;
@@ -21,17 +21,18 @@ namespace BackEnd.Controllers
         public async Task<IActionResult> GetStats()
         {
             // 1. Tổng doanh thu 
+            // 🔥 LOGIC MỚI: Chỉ tính tổng tiền của các đơn hàng có trạng thái "Completed"
             var totalRevenue = await _context.Orders
-        .Where(o => o.PaymentStatus == "Paid") 
-        .SumAsync(o => o.TotalAmount);
+                .Where(o => o.OrderStatus == "Completed")
+                .SumAsync(o => o.TotalAmount);
 
-            // 2. Tổng số đơn hàng (Trong DB mẫu đang có 1 đơn)
+            // 2. Tổng số đơn hàng (Đếm tất cả các đơn, trừ đơn Hủy nếu muốn, ở đây tôi đếm tất cả để thấy quy mô)
             var totalOrders = await _context.Orders.CountAsync();
 
             // 3. Tổng số khách hàng (Role = 'Customer')
             var totalCustomers = await _context.Users.CountAsync(u => u.Role == "Customer");
 
-            // 4. Tổng số sản phẩm (Trong DB mẫu có 8 sản phẩm)
+            // 4. Tổng số sản phẩm
             var totalProducts = await _context.Products.CountAsync();
 
             return Ok(new
@@ -42,21 +43,21 @@ namespace BackEnd.Controllers
                 products = totalProducts
             });
         }
+
         [HttpGet("chart")]
-        // Thêm 2 tham số [FromQuery] để nhận từ URL (ví dụ: ?from=2024-01-01&to=2024-01-31)
         public async Task<IActionResult> GetRevenueChart([FromQuery] DateTime? from, [FromQuery] DateTime? to)
         {
             // 1. Xử lý ngày tháng
-            // Nếu không truyền 'from', mặc định lấy 30 ngày trước
             var startDate = from ?? DateTime.Today.AddDays(-30);
-            // Nếu không truyền 'to', mặc định lấy hôm nay
             var endDate = to ?? DateTime.Today;
 
-            // Đảm bảo endDate bao gồm cả giây cuối cùng của ngày (23:59:59)
+            // Đảm bảo lấy hết ngày cuối cùng (23:59:59)
             endDate = endDate.Date.AddDays(1).AddTicks(-1);
 
+            // 2. Truy vấn dữ liệu biểu đồ
             var rawData = await _context.Orders
-                .Where(o => o.OrderDate >= startDate && o.OrderDate <= endDate && o.PaymentStatus == "Paid")
+                // 🔥 LOGIC MỚI: Lọc theo thời gian VÀ trạng thái phải là "Completed"
+                .Where(o => o.OrderDate >= startDate && o.OrderDate <= endDate && o.OrderStatus == "Completed")
                 .GroupBy(o => o.OrderDate.Value.Date)
                 .Select(g => new
                 {
@@ -66,9 +67,9 @@ namespace BackEnd.Controllers
                 .OrderBy(x => x.Date)
                 .ToListAsync();
 
+            // 3. Format dữ liệu trả về cho React
             var result = rawData.Select(x => new
             {
-                // Trả về format ngày/tháng/năm để hiển thị đẹp trên biểu đồ
                 date = x.Date.ToString("dd/MM/yyyy"),
                 revenue = x.Revenue
             });

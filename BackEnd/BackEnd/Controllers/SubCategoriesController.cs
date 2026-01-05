@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BackEnd.Models;
+using Microsoft.AspNetCore.Authorization;
+using BackEnd.DTOs;
 
 namespace BackEnd.Controllers
 {
@@ -15,93 +12,73 @@ namespace BackEnd.Controllers
     {
         private readonly FashionShopDbContext _context;
 
-        public SubCategoriesController(FashionShopDbContext context)
-        {
-            _context = context;
-        }
+        public SubCategoriesController(FashionShopDbContext context) { _context = context; }
 
-        // GET: api/SubCategories
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<SubCategory>>> GetSubCategories()
-        {
-            return await _context.SubCategories.ToListAsync();
-        }
-
-        // GET: api/SubCategories/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<SubCategory>> GetSubCategory(int id)
-        {
-            var subCategory = await _context.SubCategories.FindAsync(id);
-
-            if (subCategory == null)
-            {
-                return NotFound();
-            }
-
-            return subCategory;
-        }
-
-        // PUT: api/SubCategories/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutSubCategory(int id, SubCategory subCategory)
-        {
-            if (id != subCategory.SubCategoryId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(subCategory).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!SubCategoryExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/SubCategories
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // POST: api/SubCategories (Thêm danh mục con)
         [HttpPost]
-        public async Task<ActionResult<SubCategory>> PostSubCategory(SubCategory subCategory)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> CreateSubCategory([FromBody] CreateSubDto model)
         {
-            _context.SubCategories.Add(subCategory);
+            // 1. Tạo SubCategory
+            var sub = new SubCategory
+            {
+                SubCategoryName = model.SubCategoryName,
+                SubCategoryCode = model.SubCategoryCode
+            };
+            _context.SubCategories.Add(sub);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetSubCategory", new { id = subCategory.SubCategoryId }, subCategory);
+            // 2. Liên kết với Category cha (Bảng trung gian)
+            var link = new CategorySubCategory
+            {
+                CategoryId = model.CategoryId,
+                SubCategoryId = sub.SubCategoryId
+            };
+            _context.CategorySubCategories.Add(link);
+            await _context.SaveChangesAsync();
+
+            return Ok(sub);
         }
 
-        // DELETE: api/SubCategories/5
+        // PUT: api/SubCategories/5 (Sửa)
+        [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateSubCategory(int id, [FromBody] SubCategory sub)
+        {
+            if (id != sub.SubCategoryId) return BadRequest();
+
+            var existing = await _context.SubCategories.FindAsync(id);
+            if (existing == null) return NotFound();
+
+            existing.SubCategoryName = sub.SubCategoryName;
+            existing.SubCategoryCode = sub.SubCategoryCode;
+
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Cập nhật thành công" });
+        }
+
+        // DELETE: api/SubCategories/5 (Xóa)
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteSubCategory(int id)
         {
-            var subCategory = await _context.SubCategories.FindAsync(id);
-            if (subCategory == null)
-            {
-                return NotFound();
-            }
+            // Check sản phẩm trước
+            bool hasProduct = await _context.Products.AnyAsync(p => p.SubCategoryId == id);
+            if (hasProduct) return BadRequest("Không thể xóa: Loại sản phẩm này đang được sử dụng!");
 
-            _context.SubCategories.Remove(subCategory);
+            var sub = await _context.SubCategories.FindAsync(id);
+            if (sub == null) return NotFound();
+
+            // Xóa liên kết bảng trung gian trước (Cascade thường tự làm, nhưng viết code cho chắc)
+            var links = _context.CategorySubCategories.Where(x => x.SubCategoryId == id);
+            _context.CategorySubCategories.RemoveRange(links);
+
+            _context.SubCategories.Remove(sub);
             await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
-
-        private bool SubCategoryExists(int id)
-        {
-            return _context.SubCategories.Any(e => e.SubCategoryId == id);
+            return Ok(new { message = "Xóa thành công" });
         }
     }
+
+   
 }

@@ -113,16 +113,28 @@ namespace BackEnd.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null)
+            // 1. Kiểm tra xem có sản phẩm nào đang dùng Category này không
+            bool hasProduct = await _context.Products.AnyAsync(p => p.CategoryId == id);
+            if (hasProduct)
             {
-                return NotFound();
+                return BadRequest("Không thể xóa: Danh mục này đang chứa sản phẩm!");
             }
+
+            // 2. Kiểm tra xem có SubCategory con không
+            
+            bool hasSub = await _context.CategorySubCategories.AnyAsync(csc => csc.CategoryId == id);
+            if (hasSub)
+            {
+                return BadRequest("Không thể xóa: Danh mục này đang có danh mục con. Hãy xóa con trước!");
+            }
+
+            var category = await _context.Categories.FindAsync(id);
+            if (category == null) return NotFound();
 
             _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(new { message = "Xóa danh mục thành công" });
         }
 
         private bool CategoryExists(int id)

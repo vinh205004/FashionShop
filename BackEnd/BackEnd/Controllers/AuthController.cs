@@ -15,7 +15,7 @@ namespace BackEnd.Controllers
     public class AuthController : ControllerBase
     {
         private readonly FashionShopDbContext _context;
-        private readonly IConfiguration _configuration; // Cần cái này để đọc Key từ appsettings.json
+        private readonly IConfiguration _configuration;
 
         public AuthController(FashionShopDbContext context, IConfiguration configuration)
         {
@@ -31,6 +31,10 @@ namespace BackEnd.Controllers
 
             var claims = new List<Claim>
             {
+                // 👇 QUAN TRỌNG: 2 Dòng này giúp API Hủy Đơn lấy được ID người dùng
+                // Đừng dùng ClaimTypes.NameIdentifier vì .NET hay tự đổi tên nó
+                new Claim("UserId", user.UserId.ToString()),
+
                 new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim(ClaimTypes.Role, user.Role ?? "Customer")
@@ -42,7 +46,7 @@ namespace BackEnd.Controllers
                 issuer: jwtSettings["Issuer"],
                 audience: jwtSettings["Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddDays(7), // Token sống 7 ngày
+                expires: DateTime.Now.AddDays(7),
                 signingCredentials: creds
             );
 
@@ -75,6 +79,11 @@ namespace BackEnd.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
+            // Tự động tạo Giỏ hàng rỗng cho người dùng mới
+            var cart = new Cart { UserId = user.UserId };
+            _context.Carts.Add(cart);
+            await _context.SaveChangesAsync();
+
             return Ok(new { message = "Đăng ký thành công!" });
         }
 
@@ -96,7 +105,7 @@ namespace BackEnd.Controllers
             //  TẠO TOKEN
             string token = CreateToken(user);
 
-            // TRẢ VỀ FULL THÔNG TIN (Để Frontend dùng Auto-fill)
+            // TRẢ VỀ FULL THÔNG TIN
             return Ok(new
             {
                 message = "Đăng nhập thành công",
@@ -105,12 +114,12 @@ namespace BackEnd.Controllers
                 fullName = user.FullName,
                 role = user.Role,
                 email = user.Email,
-                phone = user.PhoneNumber, 
-                address = user.Address   
+                phone = user.PhoneNumber,
+                address = user.Address
             });
         }
+
         // API 3: CẬP NHẬT THÔNG TIN CÁ NHÂN
-        // PUT: api/Auth/profile/5
         [HttpPut("profile/{userId}")]
         public async Task<IActionResult> UpdateProfile(int userId, [FromBody] UpdateProfileRequest request)
         {
@@ -138,4 +147,21 @@ namespace BackEnd.Controllers
             });
         }
     }
+
+    // DTOs (Request Models)
+    public class RegisterRequest
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string FullName { get; set; }
+        public string Email { get; set; }
+        public string Phone { get; set; }
+    }
+
+    public class LoginRequest
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }
+
 }

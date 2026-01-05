@@ -4,7 +4,7 @@ import { useToast } from '../../contexts/ToastContext';
 import { useNavigate } from 'react-router-dom';
 import { createOrderAPI } from '../../services/orderService';
 import { useAuth } from '../contexts/AuthContext'; 
-import { PAYMENT_METHODS } from '../../services/paymentService';
+import { PAYMENT_METHODS, createPaymentAPI } from '../../services/paymentService'; // Import thêm createPaymentAPI
 
 interface CheckoutFormState {
   fullName: string;
@@ -48,7 +48,6 @@ export default function Checkout() {
 
   const total = subtotal + currentShipping - discount;
 
-
   const [formData, setFormData] = useState<CheckoutFormState>({
     fullName: '',
     phone: '',
@@ -79,24 +78,43 @@ export default function Checkout() {
 
     setIsSubmitting(true);
     try {
+      const productIdsToBuy = checkoutItems.map(item => item.id);
+      // 1. TẠO ĐƠN HÀNG TRƯỚC
       const result = await createOrderAPI(
         formData.fullName,
         formData.phone,
         formData.address,
-        formData.paymentMethod,
-        appliedVoucher
+        formData.paymentMethod, // Gửi đúng mã (VNPAY, MOMO, COD)
+        appliedVoucher,
+        productIdsToBuy
       );
 
-      if (result.success) {
-        addToast(`Đặt hàng thành công! Mã đơn: #${result.orderId}`, 'success');
-        
-        // Dọn dẹp
+      if (result.success && result.orderId) {
+        // Dọn dẹp giỏ hàng ngay sau khi tạo đơn thành công
         localStorage.removeItem('checkoutSelectedIds');
         localStorage.removeItem('appliedVoucher');
         localStorage.removeItem('voucherDiscount');
-        clear(); 
+        clear();
 
-        navigate(`/orders/${result.orderId}`);
+        // 2. XỬ LÝ THANH TOÁN
+        if (formData.paymentMethod === 'COD') {
+            // Nếu COD -> Xong luôn, chuyển sang trang chi tiết
+            addToast(`Đặt hàng thành công! Mã đơn: #${result.orderId}`, 'success');
+            navigate(`/orders/${result.orderId}`);
+        } else {
+            // Nếu Online (VNPAY/MOMO) -> Gọi API tạo URL thanh toán
+            addToast('Đang chuyển hướng sang cổng thanh toán...', 'info');
+            
+            const paymentRes = await createPaymentAPI(result.orderId, total, formData.paymentMethod);
+            
+            if (paymentRes.success && paymentRes.paymentUrl) {
+                // Chuyển hướng người dùng sang trang VNPAY/MOMO
+                window.location.href = paymentRes.paymentUrl;
+            } else {
+                addToast('Lỗi tạo link thanh toán. Vui lòng thanh toán lại trong chi tiết đơn hàng.', 'error');
+                navigate(`/orders/${result.orderId}`);
+            }
+        }
       } else {
         addToast(result.message || 'Đặt hàng thất bại', 'error');
       }
@@ -130,7 +148,7 @@ export default function Checkout() {
                   type="text" 
                   className="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-black focus:outline-none"
                   placeholder="Nguyễn Văn A"
-                  value={formData.fullName} // Binding dữ liệu
+                  value={formData.fullName} 
                   onChange={e => setFormData({...formData, fullName: e.target.value})}
                 />
               </div>
@@ -141,7 +159,7 @@ export default function Checkout() {
                   type="tel" 
                   className="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-black focus:outline-none"
                   placeholder="0987654321"
-                  value={formData.phone} // Binding dữ liệu
+                  value={formData.phone} 
                   onChange={e => setFormData({...formData, phone: e.target.value})}
                 />
               </div>
@@ -152,7 +170,7 @@ export default function Checkout() {
                   type="text" 
                   className="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-black focus:outline-none"
                   placeholder="Số nhà, đường, phường/xã, quận/huyện..."
-                  value={formData.address} // Binding dữ liệu
+                  value={formData.address} 
                   onChange={e => setFormData({...formData, address: e.target.value})}
                 />
               </div>
@@ -179,40 +197,40 @@ export default function Checkout() {
             </div>
 
             <div>
-  <label className="block text-sm font-medium mb-2">Thanh toán:</label>
-  <div className="space-y-2">
-    {PAYMENT_METHODS.map((method) => (
-      <label 
-        key={method.id}
-        className={`flex items-center gap-3 border p-3 rounded cursor-pointer transition-all ${
-          formData.paymentMethod === method.id 
-            ? 'border-black bg-gray-50 ring-1 ring-black' 
-            : 'border-gray-200 hover:border-gray-400'
-        } ${!method.isActive ? 'opacity-50 cursor-not-allowed' : ''}`}
-      >
-        <input 
-          type="radio" 
-          name="payment" 
-          value={method.id}
-          disabled={!method.isActive}
-          checked={formData.paymentMethod === method.id}
-          onChange={() => setFormData({ ...formData, paymentMethod: method.id })}
-          className="accent-black w-4 h-4"
-        />
-        <div className="flex-1">
-          <div className="flex items-center gap-2 font-medium">
-            <span>{method.icon}</span>
-            <span>{method.name}</span>
-          </div>
-          <div className="text-xs text-gray-500">{method.description}</div>
-        </div>
-        {formData.paymentMethod === method.id && (
-          <span className="text-black font-bold">✓</span>
-        )}
-      </label>
-    ))}
-  </div>
-</div>
+              <label className="block text-sm font-medium mb-2">Thanh toán:</label>
+              <div className="space-y-2">
+                {PAYMENT_METHODS.map((method) => (
+                  <label 
+                    key={method.id}
+                    className={`flex items-center gap-3 border p-3 rounded cursor-pointer transition-all ${
+                      formData.paymentMethod === method.id 
+                        ? 'border-black bg-gray-50 ring-1 ring-black' 
+                        : 'border-gray-200 hover:border-gray-400'
+                    } ${!method.isActive ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    <input 
+                      type="radio" 
+                      name="payment" 
+                      value={method.id}
+                      disabled={!method.isActive}
+                      checked={formData.paymentMethod === method.id}
+                      onChange={() => setFormData({ ...formData, paymentMethod: method.id })}
+                      className="accent-black w-4 h-4"
+                    />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 font-medium">
+                        <span>{method.icon}</span>
+                        <span>{method.name}</span>
+                      </div>
+                      <div className="text-xs text-gray-500">{method.description}</div>
+                    </div>
+                    {formData.paymentMethod === method.id && (
+                      <span className="text-black font-bold">✓</span>
+                    )}
+                  </label>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -224,7 +242,7 @@ export default function Checkout() {
             <div className="max-h-60 overflow-y-auto mb-4 pr-1 scrollbar-thin">
               {checkoutItems.map(item => (
                 <div key={item.id} className="flex gap-3 mb-3 text-sm">
-                  <img src={item.images[0]} className="w-12 h-12 object-cover rounded border" />
+                  <img src={item.images[0]} className="w-12 h-12 object-cover rounded border" alt={item.title}/>
                   <div className="flex-1">
                     <div className="font-medium line-clamp-1">{item.title}</div>
                     <div className="text-gray-500">SL: {item.quantity} x {item.price.toLocaleString()}đ</div>
@@ -262,7 +280,7 @@ export default function Checkout() {
                 isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-black hover:bg-gray-800'
               }`}
             >
-              {isSubmitting ? 'ĐANG XỬ LÝ...' : 'ĐẶT HÀNG NGAY'}
+              {isSubmitting ? 'ĐANG XỬ LÝ...' : (formData.paymentMethod === 'COD' ? 'ĐẶT HÀNG NGAY' : 'THANH TOÁN NGAY')}
             </button>
           </div>
         </div>

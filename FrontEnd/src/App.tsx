@@ -22,6 +22,7 @@ import NotFound from "./pages/NotFound";
 import UserProfile from "./pages/Auth/UserProfile";
 import Dashboard from "./pages/Admin/Dashboard";
 import ProductManager from "./pages/Admin/ProductManager";
+import OrderManager from "./pages/Admin/OrderManager";
 
 function App() {
   return (
@@ -55,7 +56,7 @@ function App() {
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="products" element={<ProductManager />} />
-            <Route path="orders" element={<div>Trang quản lý đơn hàng (Coming Soon)</div>} />
+            <Route path="orders" element={<OrderManager />} />
             <Route path="customers" element={<div>Trang quản lý user (Coming Soon)</div>} />
           </Route>
         </Route>

@@ -25,13 +25,12 @@ const Home: React.FC = () => {
   const slides = [banner1, banner2, banner3, banner4, banner5];
   const navigate = useNavigate();
   const { addToast } = useToast();
-  const { addItem } = useCart();
+  const { addToCart } = useCart();
   
   const [vouchers, setVouchers] = useState<Voucher[]>([]);
   const [products, setProducts] = useState<ProductMock[]>([]);
   const [filter, setFilter] = useState<string>("Tất cả");
 
-  // Load Voucher
   useEffect(() => {
     let mounted = true;
     getVouchers().then((data) => {
@@ -40,17 +39,14 @@ const Home: React.FC = () => {
     return () => { mounted = false; };
   }, []);
 
-  // Load Sản phẩm
   useEffect(() => {
     let mounted = true;
-    
     const loadProducts = async () => {
       try {
         let data: ProductMock[] = [];
         if (filter === "Tất cả") {
           data = await getNewProducts();
         } else {
-          // Map tên filter sang code backend
           let categoryCode = "";
           switch(filter) {
             case "NỮ": categoryCode = "nu"; break;
@@ -68,20 +64,32 @@ const Home: React.FC = () => {
         console.error("Error loading products:", error);
       }
     };
-    
     loadProducts();
-    
     return () => { mounted = false; };
   }, [filter]);
 
+  // 👇 SỬA LOGIC THÊM VÀO GIỎ Ở ĐÂY
   const handleAddToCart = (product: ProductMock) => {
-     addItem(product);
-     addToast(`Đã thêm "${product.title}" vào giỏ hàng`, 'success');
+     // 1. Tìm size mặc định (Size đầu tiên trong mảng sizes)
+     // Nếu không có sizes hoặc mảng rỗng -> fallback là "M" (hoặc "FreeSize")
+     const defaultSize = (product.sizes && product.sizes.length > 0) 
+                          ? product.sizes[0] 
+                          : "M";
+
+     // 2. Tạo object sản phẩm với size mặc định
+     const productToAdd = {
+        ...product,
+        selectedSize: defaultSize
+     };
+
+     // 3. Gọi hàm thêm vào giỏ
+     addToCart(productToAdd, 1); 
+     
+     addToast(`Đã thêm "${product.title}" (Size: ${defaultSize}) vào giỏ`, 'success');
   };
 
   return (
     <div className="w-full">
-      {/* Banner Slider */}
       <Swiper
         modules={[Autoplay, Pagination, Navigation]}
         autoplay={{ delay: 3000, disableOnInteraction: false }}
@@ -97,7 +105,6 @@ const Home: React.FC = () => {
               alt={`slide-${index}`}
               className="w-full h-full object-cover"
               onError={(e) => {
-                // Fallback nếu quên copy ảnh
                 e.currentTarget.src = "https://via.placeholder.com/1920x600?text=Banner+Not+Found";
               }}
             />
@@ -105,13 +112,12 @@ const Home: React.FC = () => {
         ))}
       </Swiper>
 
-      {/* === ƯU ĐÃI NỔI BẬT === */}
+      {/* Voucher Section - GIỮ NGUYÊN */}
       {vouchers.length > 0 && (
         <section className="max-w-7xl mx-auto my-10 px-6">
           <h2 className="text-3xl font-extrabold text-[#274151] mb-6 text-center">
             ƯU ĐÃI NỔI BẬT
           </h2>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 justify-items-center">
             {vouchers.map((v) => (
               <div key={v.id} className="w-full max-w-xl border rounded-md p-6 bg-white shadow-sm hover:shadow-md transition">
@@ -138,7 +144,7 @@ const Home: React.FC = () => {
         </section>
       )}
 
-      {/* === SẢN PHẨM MỚI === */}
+      {/* Product Section */}
       <section className="max-w-7xl mx-auto my-12 px-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-3xl font-extrabold text-[#274151]">SẢN PHẨM MỚI</h2>
@@ -165,7 +171,6 @@ const Home: React.FC = () => {
         </div>
 
         <div className="relative group">
-          {/* Custom Navigation */}
           <button className="custom-prev absolute left-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-white/90 rounded-full shadow flex items-center justify-center border opacity-0 group-hover:opacity-100 transition-opacity -ml-4">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6"/></svg>
           </button>
@@ -195,7 +200,10 @@ const Home: React.FC = () => {
                     images={p.images}
                     badges={p.badges}
                     onCardClick={() => navigate(`/product/${p.id}`)}
-                    onAddToCart={() => handleAddToCart(p)}
+                    onAddToCart={(e) => {
+                        e.stopPropagation();
+                        handleAddToCart(p);
+                    }}
                   />
                 </SwiperSlide>
             ))}

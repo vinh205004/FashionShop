@@ -186,29 +186,56 @@ namespace BackEnd.Controllers
             product.Price = model.Price;
             product.Description = model.Description;
             product.CategoryId = model.CategoryId;
-            product.SubCategoryId = model.SubCategoryId;
 
-            // 2. Xóa dữ liệu cũ (Ảnh, Size, Badge) để thêm lại cái mới
-            // (Cách này đơn giản nhất, tuy nhiên thực tế nên check diff để tối ưu)
+            // 🔥 QUAN TRỌNG: Nếu là 0 thì phải lưu là null
+            product.SubCategoryId = (model.SubCategoryId == 0) ? null : model.SubCategoryId;
+
+            // 2. Xóa dữ liệu cũ (Ảnh, Size, Badge)
+            // (Xóa trắng để add lại từ đầu -> Đảm bảo đồng bộ với Frontend)
             _context.ProductImages.RemoveRange(product.ProductImages);
             _context.ProductSizes.RemoveRange(product.ProductSizes);
             _context.ProductBadges.RemoveRange(product.ProductBadges);
 
-            // 3. Thêm dữ liệu mới (Giống hệt hàm Create)
-            if (model.Images != null)
-                foreach (var img in model.Images)
-                    product.ProductImages.Add(new ProductImage { ImageUrl = img, IsMain = model.Images.IndexOf(img) == 0 });
+            // 3. Thêm dữ liệu mới
 
+            // Xử lý Ảnh
+            if (model.Images != null && model.Images.Count > 0)
+            {
+                // Dùng vòng lặp for i để xác định IsMain chính xác hơn IndexOf (tránh lỗi nếu có 2 ảnh giống url nhau)
+                for (int i = 0; i < model.Images.Count; i++)
+                {
+                    product.ProductImages.Add(new ProductImage
+                    {
+                        ImageUrl = model.Images[i],
+                        IsMain = (i == 0) // Ảnh đầu tiên là ảnh chính
+                    });
+                }
+            }
+
+            // Xử lý Size
             if (model.Sizes != null)
+            {
                 foreach (var s in model.Sizes)
                     product.ProductSizes.Add(new ProductSize { SizeName = s });
+            }
 
+            // Xử lý Badge
             if (model.Badges != null)
+            {
                 foreach (var b in model.Badges)
                     product.ProductBadges.Add(new ProductBadge { BadgeName = b });
+            }
 
-            await _context.SaveChangesAsync();
-            return Ok(new { message = "Cập nhật thành công!" });
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok(new { message = "Cập nhật thành công!" });
+            }
+            catch (Exception ex)
+            {
+                // Bắt lỗi để biết tại sao (ví dụ lỗi khóa ngoại)
+                return BadRequest("Lỗi cập nhật: " + ex.InnerException?.Message ?? ex.Message);
+            }
         }
 
         // POST: api/Products
@@ -270,7 +297,7 @@ namespace BackEnd.Controllers
                 Price = model.Price,
                 Description = model.Description,
                 CategoryId = model.CategoryId,
-                SubCategoryId = model.SubCategoryId,
+                SubCategoryId = (model.SubCategoryId == 0) ? null : model.SubCategoryId,
 
                 // Mặc định tạo ảnh rỗng để tránh lỗi null nếu frontend không gửi
                 ProductImages = new List<ProductImage>(),

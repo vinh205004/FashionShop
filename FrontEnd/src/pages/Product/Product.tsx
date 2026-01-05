@@ -17,7 +17,9 @@ const Product: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [quantity, setQuantity] = useState(1);
-  const { addItem } = useCart();
+  
+  // 👇 SỬA 1: Dùng addToCart thay vì addItem
+  const { addToCart } = useCart();
   const { addToast } = useToast();
   
   // trạng thái accordion
@@ -33,7 +35,6 @@ const Product: React.FC = () => {
       setError(null);
       
       try {
-        // Hàm này giờ đây sẽ gọi API thật lên Server .NET
         const data = await getProductById(Number(id)); 
         
         if (!data) {
@@ -57,19 +58,22 @@ const Product: React.FC = () => {
   }, [id]);
 
   const handleAddToCart = () => {
+    // 1. Validate Size
     if (product?.sizes && product.sizes.length > 0 && !selectedSize) {
-    addToast("Vui lòng chọn kích cỡ", 'error');
-    return;
-  }
-   if (product) {
-      // Tạo một bản copy của sản phẩm và GÁN SIZE ĐÃ CHỌN VÀO
+        addToast("Vui lòng chọn kích cỡ", 'error');
+        return;
+    }
+    
+    if (product) {
+      // 2. Tạo object sản phẩm kèm size đã chọn
+      // (ProductMock đã được thêm trường selectedSize ở bước trước nên không lỗi)
       const productToSend = { 
         ...product, 
-        selectedSize: selectedSize // Gán size người dùng vừa bấm vào đây
+        selectedSize: selectedSize 
       };
 
-      // Gửi bản copy này vào giỏ hàng
-      addItem(productToSend, quantity);
+      // 3. Gọi hàm từ Context
+      addToCart(productToSend, quantity);
       
       addToast(`Đã thêm ${quantity} sản phẩm vào giỏ hàng!`, 'success');
     }
@@ -180,7 +184,6 @@ const Product: React.FC = () => {
               Màu sắc: <span className="text-gray-900">Tím hoa tiết FP072</span>
             </div>
             <div className="flex gap-2">
-              {/* màu sắc - dữ liệu mock */}
               <div className="w-16 h-20 border-2 border-gray-800 rounded overflow-hidden cursor-pointer">
                 <img src={product.images[0]} alt="Color 1" className="w-full h-full object-cover" />
               </div>

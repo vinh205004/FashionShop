@@ -3,10 +3,11 @@
     public class CreateOrderRequest
     {
         public int UserId { get; set; }
-        public string ReceiverName { get; set; } = string.Empty;
-        public string ReceiverPhone { get; set; } = string.Empty;
-        public string ShippingAddress { get; set; } = string.Empty;
-        public string? VoucherCode { get; set; } // Mã voucher (có thể null)
-        public string PaymentMethod { get; set; } = "COD";
+        public string ReceiverName { get; set; }
+        public string ReceiverPhone { get; set; }
+        public string ShippingAddress { get; set; }
+        public string PaymentMethod { get; set; }
+        public string? VoucherCode { get; set; }
+        public List<int>? SelectedProductIds { get; set; }
     }
 }

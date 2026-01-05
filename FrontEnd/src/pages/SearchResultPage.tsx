@@ -1,12 +1,16 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-// Import API
-import { getProductsPaged, getAllSizes } from "../services/mockProducts"; // <--- Import thêm getAllSizes
+
+// Import API & Types
+import { getProductsPaged, getAllSizes } from "../services/mockProducts"; 
 import type { ProductMock } from "../services/mockProducts";
 import { getCategories } from "../services/categoryService"; 
 import type { Category } from "../services/categoryService";
+
+// Import Components & Contexts
 import ProductCard from "../components/ProductCard";
 import { useToast } from "../contexts/ToastContext";
+import { useCart } from "../contexts/CartContext"; 
 import Pagination from "../components/Pagination";
 import { Search, X } from "lucide-react";
 
@@ -14,22 +18,19 @@ const SearchResultPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const { addToast } = useToast();
+  const { addToCart } = useCart(); 
   
-  // Lấy keyword từ URL (?q=...)
   const query = searchParams.get("q") || "";
   const [searchQuery, setSearchQuery] = useState(query);
   
-  // State dữ liệu
   const [products, setProducts] = useState<ProductMock[]>([]);
   const [categories, setCategories] = useState<Category[]>([]); 
   const [isLoading, setIsLoading] = useState(false);
   const [totalProducts, setTotalProducts] = useState(0);
   
-  // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const PRODUCTS_PER_PAGE = 12; 
   
-  // Filter State
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]); 
   const [sortBy, setSortBy] = useState<string>("default");
@@ -38,62 +39,48 @@ const SearchResultPage: React.FC = () => {
     max: 10000000
   });
 
-  // State Size (Lấy từ API)
   const [availableSizes, setAvailableSizes] = useState<string[]>([]);
 
-  // 1. Tải danh mục sidebar
   useEffect(() => {
     const loadCategories = async () => {
       try {
         const data = await getCategories();
         setCategories(data);
-      } catch (error) {
-        console.error(error);
-      }
+      } catch (error) { console.error(error); }
     };
     loadCategories();
   }, []);
 
-  // 2. Tải danh sách Size từ API (MỚI THÊM)
   useEffect(() => {
     const fetchSizes = async () => {
       const sizes = await getAllSizes();
-      // Sắp xếp size (Số trước, chữ sau)
-      const sortedSizes = sizes.sort((a, b) => {
-        return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
-      });
+      const sortedSizes = sizes.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
       setAvailableSizes(sortedSizes);
     };
     fetchSizes();
   }, []);
 
-  // 3. Reset ô tìm kiếm và trang khi URL thay đổi
   useEffect(() => {
     setSearchQuery(query);
-    // Nếu đổi từ khóa thì về trang 1
   }, [query]);
 
-  // 4. HÀM GỌI API TÌM KIẾM (Server-side)
   const performSearch = useCallback(async () => {
     setIsLoading(true);
     try {
       const targetCategory = selectedCategories.length > 0 ? selectedCategories[0] : ""; 
-      
       const result = await getProductsPaged(
         currentPage,
         PRODUCTS_PER_PAGE,
         targetCategory, 
-        "", // subCategory
+        "", 
         priceRange.min,
         priceRange.max,
         sortBy,
-        query, // Từ khóa tìm kiếm
-        selectedSizes // <--- Gửi danh sách size đã chọn xuống Backend
+        query, 
+        selectedSizes 
       );
-
       setProducts(result.data);
       setTotalProducts(result.total);
-
     } catch (error) {
       console.error("Lỗi tìm kiếm:", error);
       setProducts([]);
@@ -102,13 +89,10 @@ const SearchResultPage: React.FC = () => {
     }
   }, [query, currentPage, sortBy, priceRange, selectedCategories, selectedSizes]); 
 
-  // Gọi API khi các điều kiện thay đổi
   useEffect(() => {
     performSearch();
   }, [performSearch]);
 
-
-  // --- HANDLERS ---
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -125,16 +109,14 @@ const SearchResultPage: React.FC = () => {
 
   const handleCategoryToggle = (categoryCode: string) => {
     setSelectedCategories(prev =>
-      prev.includes(categoryCode)
-        ? prev.filter(c => c !== categoryCode)
-        : [...prev, categoryCode]
+      prev.includes(categoryCode) ? prev.filter(c => c !== categoryCode) : [...prev, categoryCode]
     );
     setCurrentPage(1);
   };
 
   const handleSizeToggle = (size: string) => {
     setSelectedSizes(prev => prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]);
-    setCurrentPage(1); // Reset về trang 1 khi lọc size
+    setCurrentPage(1); 
   };
 
   const handleClearFilters = () => {
@@ -154,8 +136,7 @@ const SearchResultPage: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto py-8 px-4">
-      
-      {/* THANH TÌM KIẾM */}
+      {/* THANH TÌM KIẾM - Giữ nguyên code UI */}
       <div className="mb-8">
         <form onSubmit={handleSearchSubmit} className="max-w-2xl mx-auto">
           <div className="relative">
@@ -175,10 +156,7 @@ const SearchResultPage: React.FC = () => {
                 <X size={20} />
               </button>
             )}
-            <button
-              type="submit"
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors"
-            >
+            <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors">
               <Search size={20} />
             </button>
           </div>
@@ -186,19 +164,16 @@ const SearchResultPage: React.FC = () => {
       </div>
 
       <div className="flex gap-8">
-        
-        {/* SIDEBAR BỘ LỌC */}
+        {/* SIDEBAR BỘ LỌC - Giữ nguyên */}
         <div className="w-1/4 bg-white rounded-lg shadow-sm p-6 h-fit sticky top-4 hidden md:block">
-          
-          {/* Nút Xóa bộ lọc */}
           {(selectedCategories.length > 0 || selectedSizes.length > 0 || sortBy !== 'default' || priceRange.min > 0) && (
             <div className="mb-4 flex items-center justify-between bg-gray-100 p-2 rounded">
               <span className="text-xs font-semibold">Đang lọc...</span>
               <button onClick={handleClearFilters} className="text-xs text-red-500 hover:underline">Xóa hết</button>
             </div>
           )}
-
-          {/* Danh mục (Checkbox) */}
+          
+          {/* Categories */}
           <div className="mb-6">
             <h3 className="font-bold mb-3 text-lg">Danh mục</h3>
             <div className="space-y-2">
@@ -216,14 +191,10 @@ const SearchResultPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Sắp xếp */}
+          {/* Sort */}
           <div className="mb-6">
             <h3 className="font-bold mb-3 text-lg">Sắp xếp</h3>
-            <select 
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-black"
-            >
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-black">
               <option value="default">Mặc định</option>
               <option value="price-asc">Giá: Thấp đến Cao</option>
               <option value="price-desc">Giá: Cao đến Thấp</option>
@@ -232,30 +203,20 @@ const SearchResultPage: React.FC = () => {
             </select>
           </div>
 
-          {/* Giá tiền */}
+          {/* Price */}
           <div className="mb-6">
             <h3 className="font-bold mb-3 text-lg">Khoảng giá</h3>
             <div className="flex items-center gap-2 mb-2">
-              <input 
-                type="number" 
-                value={priceRange.min} 
-                onChange={(e) => setPriceRange(prev => ({ ...prev, min: Number(e.target.value) }))}
-                className="w-full border p-2 rounded text-sm" placeholder="Min" 
-              />
+              <input type="number" value={priceRange.min} onChange={(e) => setPriceRange(prev => ({ ...prev, min: Number(e.target.value) }))} className="w-full border p-2 rounded text-sm" placeholder="Min" />
               <span>-</span>
-              <input 
-                type="number" 
-                value={priceRange.max} 
-                onChange={(e) => setPriceRange(prev => ({ ...prev, max: Number(e.target.value) }))}
-                className="w-full border p-2 rounded text-sm" placeholder="Max" 
-              />
+              <input type="number" value={priceRange.max} onChange={(e) => setPriceRange(prev => ({ ...prev, max: Number(e.target.value) }))} className="w-full border p-2 rounded text-sm" placeholder="Max" />
             </div>
             <div className="text-xs text-gray-500 text-center mb-2">
                {formatPrice(priceRange.min)} - {formatPrice(priceRange.max)} ₫
             </div>
           </div>
 
-          {/* Kích cỡ (Lấy từ API) */}
+          {/* Sizes */}
           <div>
             <h3 className="font-bold mb-3 text-lg">Kích cỡ</h3>
             <div className="flex flex-wrap gap-2">
@@ -276,22 +237,17 @@ const SearchResultPage: React.FC = () => {
 
         {/* MAIN CONTENT */}
         <div className="flex-1">
-          {/* Header Kết quả */}
           <div className="mb-6">
-            <h1 className="text-2xl font-bold mb-2">
-              {query ? `Kết quả tìm kiếm: "${query}"` : "Tất cả sản phẩm"}
-            </h1>
+            <h1 className="text-2xl font-bold mb-2">{query ? `Kết quả tìm kiếm: "${query}"` : "Tất cả sản phẩm"}</h1>
             <p className="text-gray-600">Tìm thấy {totalProducts} sản phẩm</p>
           </div>
 
-          {/* Loading */}
           {isLoading && (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 animate-pulse">
                {[1,2,3,4,5,6,7,8].map(i => <div key={i} className="h-80 bg-gray-200 rounded"></div>)}
             </div>
           )}
 
-          {/* Empty State */}
           {!isLoading && products.length === 0 && (
             <div className="text-center py-20 bg-gray-50 rounded-lg border border-dashed border-gray-300">
               <Search size={48} className="mx-auto text-gray-300 mb-4" />
@@ -301,7 +257,6 @@ const SearchResultPage: React.FC = () => {
             </div>
           )}
 
-          {/* Product Grid */}
           {!isLoading && products.length > 0 && (
             <>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -314,15 +269,24 @@ const SearchResultPage: React.FC = () => {
                     images={product.images}
                     badges={product.badges}
                     onCardClick={() => navigate(`/product/${product.id}`)}
-                    onAddToCart={() => {
-                        console.log('Add cart', product.id);
-                        addToast(`Đã thêm "${product.title}" vào giỏ hàng`, 'success');
+                    // 👇 SỬA ĐOẠN NÀY ĐỂ CHỌN SIZE TỰ ĐỘNG
+                    onAddToCart={(e) => {
+                        e.stopPropagation(); 
+                        
+                        // 1. Tìm size mặc định
+                        const defaultSize = (product.sizes && product.sizes.length > 0) ? product.sizes[0] : "M";
+
+                        // 2. Tạo object sản phẩm có size
+                        const productToAdd = { ...product, selectedSize: defaultSize };
+
+                        // 3. Thêm vào giỏ
+                        addToCart(productToAdd, 1);
+                        addToast(`Đã thêm "${product.title}" (Size: ${defaultSize}) vào giỏ`, 'success');
                     }}
                   />
                 ))}
               </div>
 
-              {/* Phân trang */}
               <Pagination
                 currentPage={currentPage}
                 totalPages={Math.ceil(totalProducts / PRODUCTS_PER_PAGE)}

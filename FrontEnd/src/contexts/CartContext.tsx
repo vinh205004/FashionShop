@@ -3,13 +3,16 @@ import type { ProductMock } from '../services/mockProducts';
 import * as cartService from '../services/cartService';
 import type { CartItemDTO } from '../services/cartService';
 
-
 export type CartItem = CartItemDTO;
 
 interface CartContextValue {
   items: CartItem[];
-  addItem: (product: ProductMock, qty?: number) => Promise<void>;
-  removeItem: (id: number, size: string) => Promise<void>;
+  // 👇 Đổi tên addItem -> addToCart để khớp với SearchResultPage
+  addToCart: (product: ProductMock, qty?: number) => Promise<void>;
+  
+  // 👇 Đổi tên removeItem -> removeFromCart cho đồng bộ
+  removeFromCart: (id: number, size: string) => Promise<void>;
+  
   updateQty: (id: number, size: string, qty: number) => Promise<void>;
   updateSize: (id: number, size?: string) => Promise<void>;
   clear: () => Promise<void>;
@@ -35,20 +38,18 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => { mounted = false; };
   }, []);
 
-  // 2. Thêm sản phẩm 
-  const addItem = async (product: ProductMock, qty = 1) => {
+  // 2. Thêm sản phẩm (Đã đổi tên hàm)
+  const addToCart = async (product: ProductMock, qty = 1) => {
     try {
-      // Gọi service 
       const updatedItems = await cartService.addToCart(product, qty);
-      // Cập nhật State bằng dữ liệu mới nhất trả về
       setItems(updatedItems);
     } catch (e) {
       console.warn('Lỗi thêm giỏ hàng:', e);
     }
   };
 
-  // 3. Xóa sản phẩm
-  const removeItem = async (id: number, size: string,) => {
+  // 3. Xóa sản phẩm (Đã đổi tên hàm)
+  const removeFromCart = async (id: number, size: string) => {
     try {
       const updatedItems = await cartService.removeCartItem(id, size);
       setItems(updatedItems);
@@ -88,7 +89,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <CartContext.Provider value={{ items, addItem, removeItem, updateQty, updateSize, clear }}>
+    <CartContext.Provider value={{ items, addToCart, removeFromCart, updateQty, updateSize, clear }}>
       {children}
     </CartContext.Provider>
   );

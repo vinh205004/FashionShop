@@ -9,7 +9,7 @@ import { checkVoucherAPI } from '../../services/voucherService';
 
 
 export default function Cart() {
-  const { items, updateQty, removeItem, updateSize, clear } = useCart();
+  const { items, updateQty, removeFromCart, updateSize, clear } = useCart();
   const { addToast } = useToast();
   const navigate = useNavigate();
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -301,7 +301,7 @@ export default function Cart() {
               clear();
               addToast('Đã xóa tất cả sản phẩm khỏi giỏ hàng.', 'success');
             } else {
-              removeItem(Number(target.id), target.size || "");
+              removeFromCart(Number(target.id), target.size || "");
               addToast('Đã xóa sản phẩm khỏi giỏ hàng.', 'success');
             }
           }

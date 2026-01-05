@@ -9,7 +9,7 @@ import { useToast } from '../contexts/ToastContext';
 	images: string[];
 	badges?: string[];
 	onCardClick?: () => void;
-	onAddToCart?: () => void;
+	onAddToCart?: (e: React.MouseEvent) => void;
 	product?: ProductMock; // optional full product to allow internal add-to-cart
 }
 
@@ -22,7 +22,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 	onAddToCart,
 	product,
 }) => {
-	const { addItem } = useCart();
+	const { addToCart } = useCart();
 	const { addToast } = useToast();
 	return (
 		<div className="bg-white border rounded overflow-hidden hover:shadow-lg transition-shadow">
@@ -65,12 +65,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
 					onClick={(e) => {
 						e.stopPropagation(); // ngăn chặn click card
 												if (onAddToCart) {
-														onAddToCart();
+														onAddToCart(e);
 														return;
 												}
-												// fallback: nếu product được truyền, gọi addItem từ context
+												// fallback: nếu product được truyền, gọi addToCart từ context
 												if (product) {
-													addItem(product);
+													addToCart(product);
 													addToast(`${product.title} đã được thêm vào giỏ hàng.`, 'success');
 												}
 					}}

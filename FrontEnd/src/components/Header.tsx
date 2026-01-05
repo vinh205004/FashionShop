@@ -1,13 +1,13 @@
 import React, { useRef, useState } from "react";
 import Slider from "react-slick";
-import { ShoppingBag, User, ChevronLeft, ChevronRight, LogOut } from "lucide-react";
+import { ShoppingBag, User, ChevronLeft, ChevronRight, LogOut, LayoutDashboard } from "lucide-react"; // Import thêm icon Dashboard
 import { Link, useNavigate } from "react-router-dom";
 import SearchBar from "./SearchBar";
 // Import Contexts
 import { useAuth } from "../pages/contexts/AuthContext";
 import { useCart } from "../contexts/CartContext";
 
-// Import ảnh logo (Giữ nguyên cách import của bạn)
+// Import ảnh logo
 import logo from "../assets/logo.PNG";
 
 import "slick-carousel/slick/slick.css";
@@ -110,8 +110,6 @@ const Header: React.FC = () => {
         {/* Các icon */}
         <div className="flex items-center gap-4 md:gap-6 text-sm font-medium text-gray-700">
           
-
-
           {/* Tài khoản (Có Dropdown) */}
           <div 
             className="relative flex flex-col items-center cursor-pointer hover:text-black transition group"
@@ -126,22 +124,53 @@ const Header: React.FC = () => {
 
             {/* Dropdown Menu khi đã đăng nhập */}
             {user && showUserMenu && (
-              <div className="absolute top-full right-0 mt-0 pt-2 w-48 animate-fade-in">
-                <div className="bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden py-1">
-                  <div className="px-4 py-2 border-b border-gray-100 bg-gray-50">
+              <div className="absolute top-full right-0 mt-0 pt-2 w-56 animate-fade-in z-50"> {/* Tăng width lên chút cho đẹp */}
+                <div className="bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden py-1">
+                  
+                  {/* Info User */}
+                  <div className="px-4 py-3 border-b border-gray-100 bg-gray-50">
                     <p className="text-xs text-gray-500">Xin chào,</p>
                     <p className="font-bold text-gray-900 truncate">{user.fullName}</p>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wider mt-0.5">{user.role}</p>
                   </div>
                   
+                  {/* MENU ITEMS */}
+                  <div className="py-1">
+                      {/* 1. Trang cá nhân */}
+                      <Link 
+                        to="/profile"
+                        onClick={(e) => e.stopPropagation()}
+                        className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors"
+                      >
+                         <User size={18} />
+                         <span>Hồ sơ của tôi</span>
+                      </Link>
 
-                  
+                      {/* 2. Link Admin (Chỉ hiện khi Role là Admin) */}
+                      {user.role === 'Admin' && (
+                          <Link 
+                            onClick={(e) => {
+                    e.stopPropagation(); // Ngăn sự kiện lan ra cha
+                    setShowUserMenu(false); // Đóng menu luôn cho gọn
+                }}
+                            to="/admin"
+                            className="flex items-center gap-3 px-4 py-2 text-blue-600 hover:bg-blue-50 font-medium transition-colors border-t border-b border-gray-100 my-1"
+                          >
+                             <LayoutDashboard size={18} />
+                             <span>Trang Quản Trị</span>
+                          </Link>
+                      )}
+                  </div>
+
+                  {/* 3. Đăng xuất */}
                   <button 
                     onClick={(e) => { e.stopPropagation(); handleLogout(); }}
-                    className="w-full flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 text-left"
+                    className="w-full flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 text-left border-t border-gray-100 mt-1"
                   >
-                    <LogOut size={16} />
-                    Đăng xuất
+                    <LogOut size={18} />
+                    <span>Đăng xuất</span>
                   </button>
+
                 </div>
               </div>
             )}

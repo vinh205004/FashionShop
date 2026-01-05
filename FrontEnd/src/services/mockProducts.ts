@@ -227,7 +227,38 @@ export const createCategory = async (name: string, code: string) => {
     }, getAuthHeader());
     return res.data;
 };
+// --- QUẢN LÝ DANH MỤC CHA ---
+export const deleteCategory = async (id: number) => {
+    const res = await axios.delete(`https://localhost:7248/api/Categories/${id}`, getAuthHeader());
+    return res.data;
+};
 
+export const updateCategory = async (id: number, name: string, code: string) => {
+    const res = await axios.put(`https://localhost:7248/api/Categories/${id}`, { 
+        categoryId: id, categoryName: name, categoryCode: code 
+    }, getAuthHeader());
+    return res.data;
+};
+
+// --- QUẢN LÝ DANH MỤC CON (SUB) ---
+export const createSubCategory = async (name: string, code: string, parentId: number) => {
+    const res = await axios.post(`https://localhost:7248/api/SubCategories`, { 
+        subCategoryName: name, subCategoryCode: code, categoryId: parentId 
+    }, getAuthHeader());
+    return res.data;
+};
+
+export const updateSubCategory = async (id: number, name: string, code: string) => {
+    const res = await axios.put(`https://localhost:7248/api/SubCategories/${id}`, { 
+        subCategoryId: id, subCategoryName: name, subCategoryCode: code 
+    }, getAuthHeader());
+    return res.data;
+};
+
+export const deleteSubCategory = async (id: number) => {
+    const res = await axios.delete(`https://localhost:7248/api/SubCategories/${id}`, getAuthHeader());
+    return res.data;
+};
 // Helpers
 export const getProductsByCategory = async (cat: string) => (await getProductsPaged(1, 100, cat)).data;
 export const getProductsBySubCategory = async (sub: string) => (await getProductsPaged(1, 100, "", sub)).data;

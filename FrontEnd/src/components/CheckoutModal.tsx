@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import { PAYMENT_METHODS, type PaymentMethodType } from '../services/paymentService'; 
+import { PAYMENT_METHODS, type PaymentMethodID } from '../services/paymentService'; 
 import { createOrderAPI } from '../services/orderService'; 
 import { useToast } from '../contexts/ToastContext';
 
-// Định nghĩa lại kiểu Order cho khớp với prop truyền vào từ Checkout
 interface OrderProp {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   items: any[];
@@ -22,14 +21,15 @@ interface CheckoutModalProps {
 
 export default function CheckoutModal({ open, order, onClose, onSuccess }: CheckoutModalProps) {
   const { addToast } = useToast();
-  const [selectedMethod, setSelectedMethod] = useState<PaymentMethodType>('cash');
-  const [paymentMethods] = useState(PAYMENT_METHODS); // Lấy danh sách phương thức thanh toán
+  
+  const [selectedMethod, setSelectedMethod] = useState<PaymentMethodID>('COD');
+  
+  const [paymentMethods] = useState(PAYMENT_METHODS);
   const [loading, setLoading] = useState(false);
   
   // State Form
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
-  // const [customerEmail, setCustomerEmail] = useState('');
   const [customerAddress, setCustomerAddress] = useState('');
   const [notes, setNotes] = useState('');
 
@@ -38,7 +38,7 @@ export default function CheckoutModal({ open, order, onClose, onSuccess }: Check
 
   useEffect(() => {
     if (open) {
-      setTimeout(() => setVisible(true), 10); // Delay nhỏ để animation chạy
+      setTimeout(() => setVisible(true), 10);
     } else {
       setVisible(false);
     }
@@ -48,40 +48,36 @@ export default function CheckoutModal({ open, order, onClose, onSuccess }: Check
 
   const closeWithAnimation = () => {
     setVisible(false);
-    setTimeout(onClose, 300); // Đợi animation đóng xong mới unmount
+    setTimeout(onClose, 300);
   };
 
-  // --- HÀM XỬ LÝ THANH TOÁN (GỌI API) ---
   const handlePayment = async () => {
-    // 1. Validate Form
     if (!customerName.trim()) { addToast('Vui lòng nhập tên khách hàng', 'error'); return; }
     if (!customerPhone.trim()) { addToast('Vui lòng nhập số điện thoại', 'error'); return; }
     if (!customerAddress.trim()) { addToast('Vui lòng nhập địa chỉ giao hàng', 'error'); return; }
 
     setLoading(true);
     try {
-      // 2. Lấy mã voucher từ LocalStorage (nếu có)
       const appliedVoucher = localStorage.getItem('appliedVoucher');
-
-      // 3. GỌI API BACKEND
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const selectedIds = order?.items.map((item: any) => item.id) || [];
       const result = await createOrderAPI(
         customerName,
         customerPhone,
         customerAddress,
-        selectedMethod === 'cash' ? 'COD' : selectedMethod.toUpperCase(), // Map method sang chuỗi Backend hiểu
-        appliedVoucher
+        selectedMethod, 
+        appliedVoucher,
+        selectedIds
       );
 
       if (result.success && result.orderId) {
         addToast(`Đặt hàng thành công! Mã đơn #${result.orderId}`, 'success');
         
-        // 4. Dọn dẹp dữ liệu tạm
         localStorage.removeItem('checkoutSelectedIds');
         localStorage.removeItem('appliedVoucher');
         localStorage.removeItem('voucherDiscount');
-        localStorage.removeItem('selectedCartIds'); // Xóa luôn chọn giỏ hàng
+        localStorage.removeItem('selectedCartIds');
 
-        // 5. Gọi callback báo thành công cho component cha
         onSuccess(result.orderId.toString());
       } else {
         addToast(result.message || 'Đặt hàng thất bại', 'error');
@@ -99,7 +95,6 @@ export default function CheckoutModal({ open, order, onClose, onSuccess }: Check
 
   return (
     <div className="fixed inset-0 z-50">
-      {/* Overlay đen mờ */}
       <div
         className={`absolute inset-0 bg-black bg-opacity-50 transition-opacity duration-300 ${
           visible ? 'opacity-100' : 'opacity-0'
@@ -107,19 +102,17 @@ export default function CheckoutModal({ open, order, onClose, onSuccess }: Check
         onClick={closeWithAnimation}
       />
 
-      {/* Panel trượt từ phải sang */}
       <aside
         className={`absolute right-0 top-0 h-full bg-white w-full max-w-md shadow-xl transform transition-transform duration-300 ease-in-out overflow-y-auto ${
           visible ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
-        {/* Header */}
         <div className="flex justify-between items-center p-6 border-b sticky top-0 bg-white z-10">
           <h2 className="text-2xl font-bold">Thanh Toán</h2>
           <button onClick={closeWithAnimation} className="text-gray-500 hover:text-black text-2xl">✕</button>
         </div>
 
-        <div className="p-6 pb-20"> {/* Padding bottom để không bị nút che */}
+        <div className="p-6 pb-20">
           
           {/* Tóm tắt đơn hàng */}
           <div className="bg-gray-50 p-4 rounded-lg mb-6 border">
@@ -199,7 +192,7 @@ export default function CheckoutModal({ open, order, onClose, onSuccess }: Check
               {paymentMethods.map((method) => (
                 <button
                   key={method.id}
-                  onClick={() => setSelectedMethod(method.id as PaymentMethodType)}
+                  onClick={() => setSelectedMethod(method.id as PaymentMethodID)} // id là COD, VNPAY...
                   disabled={!method.isActive || loading}
                   className={`w-full p-3 rounded border flex items-center gap-3 transition-all text-left ${
                     selectedMethod === method.id
@@ -222,14 +215,14 @@ export default function CheckoutModal({ open, order, onClose, onSuccess }: Check
           {selectedPaymentMethodObj && (
             <div className="bg-blue-50 p-3 rounded text-sm text-blue-800 mb-6 border border-blue-100">
               <strong>Lưu ý: </strong>
-              {selectedMethod === 'cash' 
+              {selectedMethod === 'COD' 
                 ? 'Bạn sẽ thanh toán tiền mặt cho shipper khi nhận hàng.' 
                 : 'Hệ thống sẽ chuyển hướng sang cổng thanh toán sau khi đặt hàng.'}
             </div>
           )}
         </div>
 
-        {/* Footer Buttons (Fixed bottom) */}
+        {/* Footer Buttons */}
         <div className="absolute bottom-0 left-0 w-full bg-white border-t p-4 flex gap-3 shadow-lg">
           <button
             onClick={closeWithAnimation}

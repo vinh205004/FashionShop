@@ -1,17 +1,26 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { getProductsPaged } from "../services/mockProducts"; 
+
+// API & Types
+import { getProductsPaged, getAllSizes } from "../services/mockProducts"; 
 import type { ProductMock } from "../services/mockProducts";
 import { getCategories } from "../services/categoryService";
 import type { Category } from "../services/categoryService";
+
+// Components & Contexts
 import ProductCard from "../components/ProductCard";
 import Pagination from "../components/Pagination";
-import { getAllSizes } from "../services/mockProducts";
+import { useToast } from "../contexts/ToastContext"; // 👈 Import Toast
+import { useCart } from "../contexts/CartContext";   // 👈 Import Cart
 
 const CategoryPage: React.FC = () => {
   const { category, subcategory } = useParams<{ category: string; subcategory: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  
+  // Hooks
+  const { addToast } = useToast();
+  const { addToCart } = useCart();
 
   // State
   const [products, setProducts] = useState<ProductMock[]>([]);
@@ -22,7 +31,7 @@ const CategoryPage: React.FC = () => {
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
-  const PRODUCTS_PER_PAGE = 12; // Khớp với pageSize mặc định của Backend
+  const PRODUCTS_PER_PAGE = 12;
 
   // Filter State
   const [selectedSizes, setSelectedSizes] = useState<string[]>(() => {
@@ -34,7 +43,7 @@ const CategoryPage: React.FC = () => {
   const [sortBy, setSortBy] = useState<string>(() => searchParams.get('sort') || 'default');
   const [priceRange, setPriceRange] = useState<{ min: number; max: number }>({
     min: Number(searchParams.get('minPrice')) || 0,
-    max: Number(searchParams.get('maxPrice')) || 10000000 // Tăng max lên cho thoải mái
+    max: Number(searchParams.get('maxPrice')) || 10000000 
   });
   const [tempPriceRange, setTempPriceRange] = useState<{ min: number; max: number }>({
     min: 0,
@@ -74,7 +83,7 @@ const CategoryPage: React.FC = () => {
     setSearchParams(params, { replace: true });
   }, [selectedSizes, sortBy, priceRange, setSearchParams]);
 
-  // 4. HÀM TẢI SẢN PHẨM (QUAN TRỌNG NHẤT)
+  // 4. HÀM TẢI SẢN PHẨM
   const loadProducts = useCallback(async (page: number = 1) => {
     if (!category || categories.length === 0) return;
 
@@ -85,18 +94,16 @@ const CategoryPage: React.FC = () => {
       const currentCategoryData = categories.find(cat => cat.slug === category);
       if (!currentCategoryData) throw new Error("Danh mục không tồn tại");
       
-      // Lấy CategoryCode để gửi xuống Backend (VD: 'nu')
       const categoryCode = currentCategoryData.slug; 
       
-      // GỌI API PHÂN TRANG TỪ BACKEND
       const result = await getProductsPaged(
         page, 
         PRODUCTS_PER_PAGE, 
         categoryCode, 
         selectedSubCategory || "",
-        priceRange.min, // Truyền giá Min
-        priceRange.max, // Truyền giá Max
-        sortBy,// Truyền kiểu sắp xếp
+        priceRange.min, 
+        priceRange.max, 
+        sortBy,
         "",
         selectedSizes         
       );
@@ -122,19 +129,33 @@ const CategoryPage: React.FC = () => {
   useEffect(() => {
     const fetchSizes = async () => {
       const sizes = await getAllSizes();
-      
-      // Mẹo nhỏ: Sắp xếp size cho đẹp (Tùy chọn)
-      // Nếu không sắp xếp, nó sẽ hiện lộn xộn theo thứ tự trong SQL
       const sortedSizes = sizes.sort((a, b) => {
-        // Ưu tiên số xếp trước, chữ xếp sau (logic đơn giản)
         return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
       });
-
       setAvailableSizes(sortedSizes);
     };
     fetchSizes();
   }, []);
+
   // --- HANDLERS ---
+
+  // 👇 Logic thêm vào giỏ hàng (Tự chọn size đầu tiên)
+  const handleAddToCart = (product: ProductMock) => {
+    // 1. Tìm size mặc định
+    const defaultSize = (product.sizes && product.sizes.length > 0) ? product.sizes[0] : "M";
+
+    // 2. Tạo object sản phẩm với size mặc định
+    const productToAdd = {
+       ...product,
+       selectedSize: defaultSize
+    };
+
+    // 3. Gọi hàm thêm vào giỏ
+    addToCart(productToAdd, 1); 
+    
+    addToast(`Đã thêm "${product.title}" (Size: ${defaultSize}) vào giỏ`, 'success');
+  };
+
   const handleSizeToggle = (size: string) => {
     setSelectedSizes(prev => prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]);
   };
@@ -317,11 +338,16 @@ const CategoryPage: React.FC = () => {
                     images={product.images}
                     badges={product.badges}
                     onCardClick={() => navigate(`/product/${product.id}`)}
+                    // 👇 THÊM NÚT MUA HÀNG VÀO ĐÂY
+                    onAddToCart={(e) => {
+                        e.stopPropagation();
+                        handleAddToCart(product);
+                    }}
                   />
                 ))}
               </div>
 
-              {/* Phân trang (Server-side) */}
+              {/* Phân trang */}
               <Pagination
                 currentPage={currentPage}
                 totalPages={Math.ceil(totalProducts / PRODUCTS_PER_PAGE)}
