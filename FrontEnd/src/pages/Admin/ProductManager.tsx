@@ -11,7 +11,7 @@ import {
 } from '../../services/mockProducts';
 import { useToast } from '../../contexts/ToastContext';
 
-// Import 2 Modal mới
+// Import Modal
 import CategoryModal from '../../components/Modals/CategoryModal';
 import ProductModal from '../../components/Modals/ProductModal';
 
@@ -21,10 +21,10 @@ const ProductManager = () => {
   const [subCategories, setSubCategories] = useState<SubCategory[]>([]);
   const [loading, setLoading] = useState(true);
   
-  // State quản lý Modal
+  // State Modal
   const [isCatModalOpen, setIsCatModalOpen] = useState(false);
   const [isProdModalOpen, setIsProdModalOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<ProductMock | null>(null); // Sản phẩm đang sửa
+  const [editingProduct, setEditingProduct] = useState<ProductMock | null>(null);
 
   const [filterCat, setFilterCat] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,7 +34,6 @@ const ProductManager = () => {
 
   const fetchData = async () => {
     try {
-      // setLoading(true); // Tắt loading tổng để trải nghiệm mượt hơn khi reload ngầm
       const [prodData, catData, subData] = await Promise.all([getAllProducts(), getCategories(), getAllSubCategories()]);
       setProducts(prodData);
       setCategories(catData);
@@ -46,15 +45,13 @@ const ProductManager = () => {
     }
   };
 
-  // Mở Modal Thêm mới
   const handleOpenAdd = () => {
-    setEditingProduct(null); // Reset về null để Modal biết là đang Thêm
+    setEditingProduct(null);
     setIsProdModalOpen(true);
   };
 
-  // Mở Modal Sửa
   const handleOpenEdit = (product: ProductMock) => {
-    setEditingProduct(product); // Truyền sản phẩm cần sửa vào
+    setEditingProduct(product);
     setIsProdModalOpen(true);
   };
 
@@ -78,47 +75,33 @@ const ProductManager = () => {
 
   return (
     <div className="space-y-6">
-      {/* --- MODAL AREA --- */}
-      <CategoryModal 
-        isOpen={isCatModalOpen} 
-        onClose={() => setIsCatModalOpen(false)} 
-        onSuccess={fetchData} // Load lại danh mục sau khi thêm
-      />
+      <CategoryModal isOpen={isCatModalOpen} onClose={() => setIsCatModalOpen(false)} onSuccess={fetchData} />
       <ProductModal 
         isOpen={isProdModalOpen} 
         onClose={() => setIsProdModalOpen(false)} 
-        onSuccess={fetchData} // Load lại sản phẩm sau khi thêm/sửa
+        onSuccess={fetchData} 
         categories={categories}
         allSubCategories={subCategories}
-        productToEdit={editingProduct} // Truyền data sửa (nếu có)
+        productToEdit={editingProduct} 
       />
       
-      {/* HEADER & TOOLBAR */}
+      {/* HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-xl shadow-sm border border-gray-100">
         <div>
            <h2 className="text-xl font-bold text-gray-800">Quản lý sản phẩm</h2>
            <p className="text-sm text-gray-500">Tổng: {filteredProducts.length} sản phẩm</p>
         </div>
-        
         <div className="flex gap-3">
-            <button 
-                onClick={() => setIsCatModalOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700 transition font-medium"
-            >
-                <FolderPlus size={18} />
-                <span>Thêm danh mục</span>
+            <button onClick={() => setIsCatModalOpen(true)} className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700 transition font-medium">
+                <FolderPlus size={18} /> <span>Thêm danh mục</span>
             </button>
-            <button 
-                onClick={handleOpenAdd}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-md transition font-medium"
-            >
-                <PackagePlus size={18} />
-                <span>Thêm sản phẩm</span>
+            <button onClick={handleOpenAdd} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-md transition font-medium">
+                <PackagePlus size={18} /> <span>Thêm sản phẩm</span>
             </button>
         </div>
       </div>
 
-      {/* BỘ LỌC (Giữ nguyên) */}
+      {/* FILTER */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -135,7 +118,7 @@ const ProductManager = () => {
         </div>
       </div>
 
-      {/* DANH SÁCH SẢN PHẨM */}
+      {/* LIST */}
       {loading ? ( <div className="text-center py-10">Đang tải...</div> ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-4">
           {filteredProducts.map((product) => (
@@ -152,10 +135,15 @@ const ProductManager = () => {
                     </div>
                 </div>
                 
-                <div className="mt-3 flex items-center justify-between">
+                <div className="mt-2 text-sm text-gray-500">
+                    Kho: <span className={`font-bold ${product.quantity === 0 ? 'text-red-500' : 'text-gray-800'}`}>
+                        {product.quantity}
+                    </span>
+                </div>
+
+                <div className="mt-1 flex items-center justify-between">
                     <p className="text-lg font-bold text-red-600">{product.price.toLocaleString('vi-VN')} ₫</p>
                     <div className="flex gap-2">
-                        {/* Nút Sửa: Gọi handleOpenEdit */}
                         <button onClick={() => handleOpenEdit(product)} className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition" title="Sửa">
                             <Edit size={18} />
                         </button>

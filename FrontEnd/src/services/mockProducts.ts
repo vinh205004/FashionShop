@@ -9,7 +9,9 @@ export interface ProductMock {
   images: string[];
   badges?: string[];
   
-  // 👇 Đã thêm mới 2 trường này để sửa lỗi đỏ
+  // 👇 Đã thêm trường số lượng
+  quantity: number; 
+
   categoryId: number;      
   subCategoryId: number;   
   
@@ -26,6 +28,9 @@ interface BackendProduct {
   price: number;
   description: string;
   
+  // 👇 Mapping trường số lượng từ API
+  quantity: number;
+
   // ID từ backend
   categoryId: number;
   subCategoryId: number;
@@ -69,12 +74,15 @@ const mapToFrontend = (item: BackendProduct): ProductMock => {
     price: item.price,
     description: item.description || "",
     
-    // 👇 MAP ID TỪ BACKEND SANG FRONTEND
+    // 👇 Map Quantity
+    quantity: item.quantity !== undefined ? item.quantity : 0,
+
+    // MAP ID
     categoryId: item.categoryId,
     subCategoryId: item.subCategoryId,
 
     category: item.category?.categoryName || "",
-    subCategory: item.subCategory?.subCategoryName || "", // Lấy tên hiển thị
+    subCategory: item.subCategory?.subCategoryName || "", 
     
     images: sortedImages && sortedImages.length > 0 
             ? sortedImages.map(img => img.imageUrl) 
@@ -183,7 +191,6 @@ export const getCategories = async () => {
     }
 };
 
-// Hàm lấy tất cả SubCategory (Mới thêm)
 export const getAllSubCategories = async () => {
     try {
         const res = await axios.get(`${API_URL}/subcategories`); 
@@ -193,7 +200,6 @@ export const getAllSubCategories = async () => {
     }
 };
 
-// Hàm lấy SubCategory theo ID cha (Dự phòng)
 export const getSubCategoriesByCatId = async (catId: number) => {
     try {
         const res = await axios.get(`https://localhost:7248/api/Categories/${catId}/subcategories`);
@@ -227,7 +233,7 @@ export const createCategory = async (name: string, code: string) => {
     }, getAuthHeader());
     return res.data;
 };
-// --- QUẢN LÝ DANH MỤC CHA ---
+
 export const deleteCategory = async (id: number) => {
     const res = await axios.delete(`https://localhost:7248/api/Categories/${id}`, getAuthHeader());
     return res.data;
@@ -240,7 +246,6 @@ export const updateCategory = async (id: number, name: string, code: string) => 
     return res.data;
 };
 
-// --- QUẢN LÝ DANH MỤC CON (SUB) ---
 export const createSubCategory = async (name: string, code: string, parentId: number) => {
     const res = await axios.post(`https://localhost:7248/api/SubCategories`, { 
         subCategoryName: name, subCategoryCode: code, categoryId: parentId 
@@ -259,6 +264,7 @@ export const deleteSubCategory = async (id: number) => {
     const res = await axios.delete(`https://localhost:7248/api/SubCategories/${id}`, getAuthHeader());
     return res.data;
 };
+
 // Helpers
 export const getProductsByCategory = async (cat: string) => (await getProductsPaged(1, 100, cat)).data;
 export const getProductsBySubCategory = async (sub: string) => (await getProductsPaged(1, 100, "", sub)).data;

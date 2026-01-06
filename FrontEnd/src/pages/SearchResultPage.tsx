@@ -260,31 +260,39 @@ const SearchResultPage: React.FC = () => {
           {!isLoading && products.length > 0 && (
             <>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {products.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    title={product.title}
-                    price={product.price}
-                    images={product.images}
-                    badges={product.badges}
-                    onCardClick={() => navigate(`/product/${product.id}`)}
-                    // 👇 SỬA ĐOẠN NÀY ĐỂ CHỌN SIZE TỰ ĐỘNG
-                    onAddToCart={(e) => {
-                        e.stopPropagation(); 
-                        
-                        // 1. Tìm size mặc định
-                        const defaultSize = (product.sizes && product.sizes.length > 0) ? product.sizes[0] : "M";
+                {products.map((p) => {
+                    const isOutOfStock = p.quantity <= 0;
+                    const displayBadges = isOutOfStock 
+                        ? ["HẾT HÀNG", ...(p.badges || [])] 
+                        : p.badges;
 
-                        // 2. Tạo object sản phẩm có size
-                        const productToAdd = { ...product, selectedSize: defaultSize };
+                    return (
+                        <div key={p.id} className={isOutOfStock ? "opacity-75 grayscale-[50%]" : ""}>
+                            <ProductCard
+                                product={p}
+                                title={p.title}
+                                price={p.price}
+                                images={p.images}
+                                badges={displayBadges} // Truyền badge Hết hàng
+                                onCardClick={() => navigate(`/product/${p.id}`)}
+                                onAddToCart={(e) => {
+                                    e.stopPropagation();
+                                    
+                                    if (isOutOfStock) {
+                                        addToast("Sản phẩm đã hết hàng!", 'error');
+                                        return;
+                                    }
 
-                        // 3. Thêm vào giỏ
-                        addToCart(productToAdd, 1);
-                        addToast(`Đã thêm "${product.title}" (Size: ${defaultSize}) vào giỏ`, 'success');
-                    }}
-                  />
-                ))}
+                                    const defaultSize = (p.sizes && p.sizes.length > 0) ? p.sizes[0] : "M";
+                                    const productToAdd = { ...p, selectedSize: defaultSize };
+
+                                    addToCart(productToAdd, 1);
+                                    addToast(`Đã thêm "${p.title}" (Size: ${defaultSize}) vào giỏ`, 'success');
+                                }}
+                            />
+                        </div>
+                    );
+                })}
               </div>
 
               <Pagination

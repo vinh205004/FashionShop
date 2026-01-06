@@ -18,11 +18,9 @@ const Product: React.FC = () => {
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [quantity, setQuantity] = useState(1);
   
-  // 👇 SỬA 1: Dùng addToCart thay vì addItem
   const { addToCart } = useCart();
   const { addToast } = useToast();
   
-  // trạng thái accordion
   const [descriptionOpen, setDescriptionOpen] = useState(true);
   const [materialOpen, setMaterialOpen] = useState(false);
   const [guideOpen, setGuideOpen] = useState(false);
@@ -30,18 +28,14 @@ const Product: React.FC = () => {
   useEffect(() => {
     const loadProduct = async () => {
       if (!id) return;
-      
       setIsLoading(true);
       setError(null);
-      
       try {
         const data = await getProductById(Number(id)); 
-        
         if (!data) {
           setError("Không tìm thấy sản phẩm");
         } else {
           setProduct(data);
-          // Tự động chọn size đầu tiên (nếu có)
           if (data.sizes && data.sizes.length > 0) {
             setSelectedSize(data.sizes[0]);
           }
@@ -53,28 +47,38 @@ const Product: React.FC = () => {
         setIsLoading(false);
       }
     };
-
     loadProduct();
   }, [id]);
 
+  // Kiểm tra còn hàng hay không
+  const isOutOfStock = product ? product.quantity <= 0 : false;
+
   const handleAddToCart = () => {
-    // 1. Validate Size
+    // 1. Check hết hàng
+    if (isOutOfStock) {
+        addToast("Sản phẩm đã hết hàng!", 'error');
+        return;
+    }
+
+    // 2. Validate Size
     if (product?.sizes && product.sizes.length > 0 && !selectedSize) {
         addToast("Vui lòng chọn kích cỡ", 'error');
         return;
     }
     
     if (product) {
-      // 2. Tạo object sản phẩm kèm size đã chọn
-      // (ProductMock đã được thêm trường selectedSize ở bước trước nên không lỗi)
+      // 3. Kiểm tra số lượng mua có vượt quá kho không
+      if (quantity > product.quantity) {
+          addToast(`Chỉ còn ${product.quantity} sản phẩm trong kho!`, 'error');
+          return;
+      }
+
       const productToSend = { 
         ...product, 
         selectedSize: selectedSize 
       };
 
-      // 3. Gọi hàm từ Context
       addToCart(productToSend, quantity);
-      
       addToast(`Đã thêm ${quantity} sản phẩm vào giỏ hàng!`, 'success');
     }
   };
@@ -86,7 +90,6 @@ const Product: React.FC = () => {
     }
   };
 
-  // trạng thái loading
   if (isLoading) {
     return (
       <div className="max-w-7xl mx-auto py-8 px-4">
@@ -103,19 +106,13 @@ const Product: React.FC = () => {
     );
   }
 
-  // Error state
   if (error || !product) {
     return (
       <div className="max-w-7xl mx-auto py-8 px-4">
         <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
           <h3 className="text-lg font-semibold text-red-800 mb-2">Có lỗi xảy ra</h3>
           <p className="text-red-600 mb-4">{error || "Không tìm thấy sản phẩm"}</p>
-          <button 
-            onClick={() => navigate(-1)}
-            className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition-colors"
-          >
-            Quay lại
-          </button>
+          <button onClick={() => navigate(-1)} className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition-colors">Quay lại</button>
         </div>
       </div>
     );
@@ -124,9 +121,8 @@ const Product: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto py-8 px-4">
       <div className="flex gap-8">
-        {/* vùng bên trái - ảnh */}
+        {/* LEFT: IMAGE */}
         <div className="w-2/3 flex gap-4">
-          {/* cột ảnh thu nhỏ */}
           <div className="flex flex-col gap-2 w-24">
             {product.images.map((img, index) => (
               <div
@@ -136,73 +132,51 @@ const Product: React.FC = () => {
                   selectedImage === index ? 'border-gray-800' : 'border-gray-200 hover:border-gray-400'
                 }`}
               >
-                <img 
-                  src={img} 
-                  alt={`${product.title} ${index + 1}`}
-                  className="w-full h-24 object-cover"
-                />
+                <img src={img} alt={`${product.title} ${index + 1}`} className="w-full h-24 object-cover"/>
               </div>
             ))}
           </div>
-
-          {/* Main image */}
           <div className="flex-1 relative bg-gray-100 rounded overflow-hidden">
-            <img 
-              src={product.images[selectedImage]} 
-              alt={product.title}
-              className="w-full h-full object-contain"
-            />
+            <img src={product.images[selectedImage]} alt={product.title} className="w-full h-full object-contain"/>
             <div className="absolute bottom-4 right-4 bg-white px-3 py-1 rounded text-sm font-medium">
               {selectedImage + 1} / {product.images.length}
             </div>
           </div>
         </div>
 
-        {/* vùng bên phải - thông tin sản phẩm */}
+        {/* RIGHT: INFO */}
         <div className="flex-1">
-          {/* tiêu đề và SKU */}
           <h1 className="text-2xl font-bold text-gray-800 mb-2">{product.title}</h1>
           <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
             <span>SKU: SKU-{product.id}</span>
-            <button 
-              onClick={handleCopyCode}
-              className="text-blue-600 hover:underline flex items-center gap-1"
-            >
-              <Share2 size={14} />
-              Copy
+            <button onClick={handleCopyCode} className="text-blue-600 hover:underline flex items-center gap-1">
+              <Share2 size={14} /> Copy
             </button>
           </div>
 
-          {/* giá */}
-          <div className="text-3xl font-bold text-gray-900 mb-6">
+          <div className="text-3xl font-bold text-gray-900 mb-2">
             {product.price.toLocaleString('vi-VN')} ₫
           </div>
 
-          {/* màu sắc - dữ liệu mock */}
+          {/* HIỂN THỊ TÌNH TRẠNG KHO */}
           <div className="mb-6">
-            <div className="text-sm font-medium text-gray-700 mb-2">
-              Màu sắc: <span className="text-gray-900">Tím hoa tiết FP072</span>
-            </div>
-            <div className="flex gap-2">
-              <div className="w-16 h-20 border-2 border-gray-800 rounded overflow-hidden cursor-pointer">
-                <img src={product.images[0]} alt="Color 1" className="w-full h-full object-cover" />
-              </div>
-              <div className="w-16 h-20 border-2 border-gray-200 rounded overflow-hidden cursor-pointer hover:border-gray-400">
-                <img src={product.images[0]} alt="Color 2" className="w-full h-full object-cover opacity-50" />
-              </div>
-              <div className="w-16 h-20 border-2 border-gray-200 rounded overflow-hidden cursor-pointer hover:border-gray-400">
-                <img src={product.images[0]} alt="Color 3" className="w-full h-full object-cover opacity-50" />
-              </div>
-            </div>
+             {isOutOfStock ? (
+                 <span className="inline-block px-3 py-1 bg-red-100 text-red-600 text-sm font-bold rounded">
+                     HẾT HÀNG
+                 </span>
+             ) : (
+                 <span className="text-sm text-green-600 font-medium">
+                     Còn hàng (Kho: {product.quantity})
+                 </span>
+             )}
           </div>
 
-          {/* chọn kích cỡ */}
+          {/* SIZES */}
           <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-gray-700">Kích cỡ:</span>
               <button className="text-sm text-blue-600 hover:underline flex items-center gap-1">
-                <Share2 size={14} />
-                Gợi ý tìm kích cỡ
+                <Share2 size={14} /> Gợi ý tìm kích cỡ
               </button>
             </div>
             <div className="grid grid-cols-4 gap-2">
@@ -210,11 +184,12 @@ const Product: React.FC = () => {
                 <button
                   key={size}
                   onClick={() => setSelectedSize(size)}
+                  disabled={isOutOfStock} // Disable nếu hết hàng
                   className={`px-4 py-3 text-sm border rounded transition-colors ${
                     selectedSize === size
                       ? 'bg-gray-800 text-white border-gray-800'
                       : 'bg-white text-gray-800 border-gray-300 hover:border-gray-500'
-                  }`}
+                  } ${isOutOfStock ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   {size}
                 </button>
@@ -222,70 +197,67 @@ const Product: React.FC = () => {
             </div>
           </div>
 
-          {/* chọn số lượng */}
+          {/* QUANTITY */}
           <div className="mb-6">
             <span className="text-sm font-medium text-gray-700 block mb-2">Số lượng:</span>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="w-10 h-10 border border-gray-300 rounded hover:bg-gray-100"
+                disabled={isOutOfStock}
+                className="w-10 h-10 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 -
               </button>
               <input
                 type="number"
                 value={quantity}
-                onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                className="w-16 h-10 text-center border border-gray-300 rounded"
+                disabled={isOutOfStock}
+                onChange={(e) => {
+                    const val = parseInt(e.target.value) || 1;
+                    // Không cho nhập quá số lượng kho
+                    setQuantity(Math.min(val, product.quantity > 0 ? product.quantity : 1));
+                }}
+                className="w-16 h-10 text-center border border-gray-300 rounded disabled:bg-gray-100"
               />
               <button
-                onClick={() => setQuantity(quantity + 1)}
-                className="w-10 h-10 border border-gray-300 rounded hover:bg-gray-100"
+                onClick={() => setQuantity(Math.min(quantity + 1, product.quantity))}
+                disabled={isOutOfStock || quantity >= product.quantity}
+                className="w-10 h-10 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 +
               </button>
             </div>
           </div>
 
-          {/* nút hành động */}
+          {/* ACTIONS */}
           <div className="flex gap-3 mb-6">
             <button
               onClick={handleAddToCart}
-              className="flex-1 bg-red-600 text-white py-3 rounded font-medium hover:bg-red-700 transition-colors"
+              disabled={isOutOfStock}
+              className={`flex-1 py-3 rounded font-medium transition-colors text-white ${
+                  isOutOfStock 
+                    ? 'bg-gray-400 cursor-not-allowed' 
+                    : 'bg-red-600 hover:bg-red-700'
+              }`}
             >
-              THÊM VÀO GIỎ HÀNG
+              {isOutOfStock ? 'HẾT HÀNG' : 'THÊM VÀO GIỎ HÀNG'}
             </button>
             <button className="flex-1 bg-white text-gray-800 py-3 rounded font-medium border-2 border-gray-800 hover:bg-gray-800 hover:text-white transition-colors">
               TÌM TẠI CỬA HÀNG
             </button>
           </div>
 
-          {/* accordions */}
+          {/* ACCORDION */}
           <div className="border-t border-gray-200">
-            {/* mô tả */}
             <div className="border-b border-gray-200">
-              <button
-                onClick={() => setDescriptionOpen(!descriptionOpen)}
-                className="w-full flex items-center justify-between py-4 text-left font-medium text-gray-800"
-              >
-                Mô tả
-                {descriptionOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+              <button onClick={() => setDescriptionOpen(!descriptionOpen)} className="w-full flex items-center justify-between py-4 text-left font-medium text-gray-800">
+                Mô tả {descriptionOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
               </button>
-              {descriptionOpen && (
-                <div className="pb-4 text-sm text-gray-600">
-                  {product.description || "Sản phẩm này chưa có mô tả chi tiết."}
-                </div>
-              )}
+              {descriptionOpen && <div className="pb-4 text-sm text-gray-600">{product.description || "Sản phẩm này chưa có mô tả chi tiết."}</div>}
             </div>
-
-            {/* chất liệu */}
             <div className="border-b border-gray-200">
-              <button
-                onClick={() => setMaterialOpen(!materialOpen)}
-                className="w-full flex items-center justify-between py-4 text-left font-medium text-gray-800"
-              >
-                Chất liệu
-                {materialOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+              <button onClick={() => setMaterialOpen(!materialOpen)} className="w-full flex items-center justify-between py-4 text-left font-medium text-gray-800">
+                Chất liệu {materialOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
               </button>
               {materialOpen && (
                 <div className="pb-4 text-sm text-gray-600">
@@ -298,15 +270,9 @@ const Product: React.FC = () => {
                 </div>
               )}
             </div>
-
-              {/* hướng dẫn sử dụng */}
             <div className="border-b border-gray-200">
-              <button
-                onClick={() => setGuideOpen(!guideOpen)}
-                className="w-full flex items-center justify-between py-4 text-left font-medium text-gray-800"
-              >
-                Hướng dẫn sử dụng
-                {guideOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+              <button onClick={() => setGuideOpen(!guideOpen)} className="w-full flex items-center justify-between py-4 text-left font-medium text-gray-800">
+                Hướng dẫn sử dụng {guideOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
               </button>
               {guideOpen && (
                 <div className="pb-4 text-sm text-gray-600">
@@ -321,42 +287,19 @@ const Product: React.FC = () => {
             </div>
           </div>
 
-          {/* Benefits */}
+          {/* BENEFITS */}
           <div className="mt-6 space-y-3">
             <div className="flex items-start gap-3 text-sm">
-              <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                </svg>
-              </div>
-              <div>
-                <div className="font-medium text-gray-800">Thanh toán khi nhận hàng (COD)</div>
-                <div className="text-gray-600">Giao hàng toàn quốc.</div>
-              </div>
+              <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" /></svg></div>
+              <div><div className="font-medium text-gray-800">Thanh toán khi nhận hàng (COD)</div><div className="text-gray-600">Giao hàng toàn quốc.</div></div>
             </div>
-
             <div className="flex items-start gap-3 text-sm">
-              <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-                </svg>
-              </div>
-              <div>
-                <div className="font-medium text-gray-800">Miễn phí giao hàng</div>
-                <div className="text-gray-600">Với đơn hàng trên 599.000 ₫.</div>
-              </div>
+              <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg></div>
+              <div><div className="font-medium text-gray-800">Miễn phí giao hàng</div><div className="text-gray-600">Với đơn hàng trên 599.000 ₫.</div></div>
             </div>
-
             <div className="flex items-start gap-3 text-sm">
-              <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
-              </div>
-              <div>
-                <div className="font-medium text-gray-800">Đổi hàng miễn phí</div>
-                <div className="text-gray-600">Trong 30 ngày kể từ ngày mua.</div>
-              </div>
+              <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg></div>
+              <div><div className="font-medium text-gray-800">Đổi hàng miễn phí</div><div className="text-gray-600">Trong 30 ngày kể từ ngày mua.</div></div>
             </div>
           </div>
         </div>

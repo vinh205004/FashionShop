@@ -68,21 +68,26 @@ const Home: React.FC = () => {
     return () => { mounted = false; };
   }, [filter]);
 
-  // 👇 SỬA LOGIC THÊM VÀO GIỎ Ở ĐÂY
+  // 👇 SỬA LOGIC: Thêm check quantity
   const handleAddToCart = (product: ProductMock) => {
-     // 1. Tìm size mặc định (Size đầu tiên trong mảng sizes)
-     // Nếu không có sizes hoặc mảng rỗng -> fallback là "M" (hoặc "FreeSize")
-     const defaultSize = (product.sizes && product.sizes.length > 0) 
-                          ? product.sizes[0] 
-                          : "M";
+     // 1. Check an toàn: Nếu hết hàng thì chặn luôn
+     if (product.quantity <= 0) {
+         addToast("Sản phẩm đã hết hàng!", 'error');
+         return;
+     }
 
-     // 2. Tạo object sản phẩm với size mặc định
+     // 2. Tìm size mặc định
+     const defaultSize = (product.sizes && product.sizes.length > 0) 
+                           ? product.sizes[0] 
+                           : "M";
+
+     // 3. Tạo object
      const productToAdd = {
         ...product,
         selectedSize: defaultSize
      };
 
-     // 3. Gọi hàm thêm vào giỏ
+     // 4. Thêm vào giỏ
      addToCart(productToAdd, 1); 
      
      addToast(`Đã thêm "${product.title}" (Size: ${defaultSize}) vào giỏ`, 'success');
@@ -112,7 +117,7 @@ const Home: React.FC = () => {
         ))}
       </Swiper>
 
-      {/* Voucher Section - GIỮ NGUYÊN */}
+      {/* Voucher Section */}
       {vouchers.length > 0 && (
         <section className="max-w-7xl mx-auto my-10 px-6">
           <h2 className="text-3xl font-extrabold text-[#274151] mb-6 text-center">
@@ -193,6 +198,7 @@ const Home: React.FC = () => {
           >
             {products.map((p) => (
                 <SwiperSlide key={p.id}>
+                  {/* 👇 Code gọn hơn nhiều vì ProductCard tự lo UI */}
                   <ProductCard
                     product={p}
                     title={p.title}

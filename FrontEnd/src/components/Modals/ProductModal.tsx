@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { 
-    createProduct, 
-    updateProduct, 
-    type Category, 
-    type ProductMock,
-    type SubCategory // Import type
+  createProduct, 
+  updateProduct, 
+  type Category, 
+  type ProductMock,
+  type SubCategory 
 } from '../../services/mockProducts';
 import { useToast } from '../../contexts/ToastContext';
 
@@ -14,7 +14,7 @@ interface Props {
   onClose: () => void;
   onSuccess: () => void;
   categories: Category[];
-  allSubCategories: SubCategory[]; // 👈 Nhận list tất cả sub
+  allSubCategories: SubCategory[]; 
   productToEdit?: ProductMock | null;
 }
 
@@ -24,6 +24,7 @@ const ProductModal = ({ isOpen, onClose, onSuccess, categories, allSubCategories
   const [formData, setFormData] = useState({
     title: "",
     price: 0,
+    quantity: 100, // Default quantity
     description: "",
     categoryId: 0,
     subCategoryId: 0,
@@ -32,8 +33,7 @@ const ProductModal = ({ isOpen, onClose, onSuccess, categories, allSubCategories
     badges: [] as string[]
   });
 
-  // 1. LỌC DANH SÁCH SUB-CATEGORY THEO CATEGORY ĐANG CHỌN
-  // (Đây là logic "đơn giản" mà hiệu quả bạn cần)
+  // Lọc SubCategory theo Category
   const filteredSubCategories = allSubCategories.filter(
       sub => sub.categoryId === formData.categoryId
   );
@@ -45,21 +45,21 @@ const ProductModal = ({ isOpen, onClose, onSuccess, categories, allSubCategories
             setFormData({
                 title: productToEdit.title,
                 price: productToEdit.price,
+                quantity: productToEdit.quantity || 0, // Load quantity cũ
                 description: productToEdit.description || "",
                 categoryId: productToEdit.categoryId,
-                subCategoryId: productToEdit.subCategoryId, // Lấy đúng ID cũ
+                subCategoryId: productToEdit.subCategoryId, 
                 sizes: productToEdit.sizes || [],
                 images: productToEdit.images || [],
                 badges: productToEdit.badges || []
             });
         } else {
             // --- THÊM ---
-            // Mặc định chọn category đầu tiên & sub đầu tiên của nó
             const firstCatId = categories[0]?.categoryId || 0;
             const validSubs = allSubCategories.filter(s => s.categoryId === firstCatId);
             
             setFormData({
-                title: "", price: 0, description: "", images: [""], sizes: ["S", "M"], badges: [],
+                title: "", price: 0, quantity: 100, description: "", images: [""], sizes: ["S", "M"], badges: [],
                 categoryId: firstCatId,
                 subCategoryId: validSubs[0]?.subCategoryId || 0
             });
@@ -67,19 +67,19 @@ const ProductModal = ({ isOpen, onClose, onSuccess, categories, allSubCategories
     }
   }, [productToEdit, isOpen, categories, allSubCategories]);
 
-  // Khi người dùng đổi Category -> Tự reset SubCategory về cái đầu tiên hợp lệ
   const handleCategoryChange = (newCatId: number) => {
       const validSubs = allSubCategories.filter(s => s.categoryId === newCatId);
       setFormData(prev => ({
           ...prev,
           categoryId: newCatId,
-          subCategoryId: validSubs[0]?.subCategoryId || 0 // Chọn cái đầu tiên hoặc 0
+          subCategoryId: validSubs[0]?.subCategoryId || 0 
       }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      // Gọi API create/update
       if (productToEdit) await updateProduct(productToEdit.id, formData);
       else await createProduct(formData);
       
@@ -91,7 +91,6 @@ const ProductModal = ({ isOpen, onClose, onSuccess, categories, allSubCategories
     }
   };
 
-  // Helper ảnh... (Giữ nguyên)
   const handleImageChange = (index: number, value: string) => {
     const newImages = [...formData.images]; newImages[index] = value;
     setFormData({ ...formData, images: newImages });
@@ -109,6 +108,8 @@ const ProductModal = ({ isOpen, onClose, onSuccess, categories, allSubCategories
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            
+            {/* Hàng 1: Tên & Giá */}
             <div className="grid grid-cols-2 gap-4">
                 <div>
                     <label className="text-sm font-medium">Tên sản phẩm</label>
@@ -116,12 +117,16 @@ const ProductModal = ({ isOpen, onClose, onSuccess, categories, allSubCategories
                 </div>
                 <div>
                     <label className="text-sm font-medium">Giá bán (VNĐ)</label>
-                    <input type="number" className="w-full border p-2 rounded mt-1" required value={formData.price} onChange={e => setFormData({...formData, price: Number(e.target.value)})} />
+                    <input type="number" className="w-full border p-2 rounded mt-1" required min="0" value={formData.price} onChange={e => setFormData({...formData, price: Number(e.target.value)})} />
                 </div>
             </div>
 
-            {/* --- PHẦN CHỌN DANH MỤC ĐÃ SỬA --- */}
+            {/* Hàng 2: Số lượng & Danh mục */}
             <div className="grid grid-cols-2 gap-4">
+                <div>
+                    <label className="text-sm font-medium">Số lượng kho</label>
+                    <input type="number" className="w-full border p-2 rounded mt-1" required min="0" value={formData.quantity} onChange={e => setFormData({...formData, quantity: Number(e.target.value)})} />
+                </div>
                 <div>
                     <label className="text-sm font-medium">Danh mục chính</label>
                     <select 
@@ -132,15 +137,17 @@ const ProductModal = ({ isOpen, onClose, onSuccess, categories, allSubCategories
                         {categories.map(c => <option key={c.categoryId} value={c.categoryId}>{c.categoryName}</option>)}
                     </select>
                 </div>
+            </div>
 
+            {/* Hàng 3: SubCategory */}
+            <div className="grid grid-cols-2 gap-4">
                 <div>
-                    <label className="text-sm font-medium">Loại sản phẩm</label>
+                    <label className="text-sm font-medium">Loại sản phẩm (Sub)</label>
                     <select 
                         className="w-full border p-2 rounded mt-1" 
                         value={formData.subCategoryId} 
                         onChange={e => setFormData({...formData, subCategoryId: Number(e.target.value)})}
                     >
-                        {/* Chỉ hiện những sub thuộc category đang chọn */}
                         {filteredSubCategories.map(s => (
                             <option key={s.subCategoryId} value={s.subCategoryId}>
                                 {s.subCategoryName}
@@ -149,9 +156,11 @@ const ProductModal = ({ isOpen, onClose, onSuccess, categories, allSubCategories
                         {filteredSubCategories.length === 0 && <option value="0">Không có mục con</option>}
                     </select>
                 </div>
+                <div>
+                    {/* Placeholder cho size/badge nếu cần */}
+                </div>
             </div>
 
-            {/* Các phần khác (Mô tả, Ảnh, Size...) giữ nguyên */}
             <div>
                 <label className="text-sm font-medium">Mô tả</label>
                 <textarea rows={3} className="w-full border p-2 rounded mt-1" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} />

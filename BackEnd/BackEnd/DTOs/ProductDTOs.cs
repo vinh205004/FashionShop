@@ -16,6 +16,7 @@ namespace BackEnd.DTOs
         // ID của danh mục đã chọn
         public int CategoryId { get; set; }
         public int SubCategoryId { get; set; }
+        public int Quantity { get; set; } = 0;
 
         // Các danh sách (Mảng) gửi từ React lên
         public List<string> Sizes { get; set; }  // ["S", "M", "L"]

@@ -1,8 +1,13 @@
 import axios from 'axios';
 
-const API_URL = 'https://localhost:7248/api/Vouchers';
+const API_URL = 'https://localhost:7248/api/Vouchers'; // Đổi port nếu cần
 
-// Định nghĩa kiểu dữ liệu cho Voucher hiển thị
+const getAuthHeader = () => {
+    const token = localStorage.getItem("token");
+    return { headers: { Authorization: `Bearer ${token}` } };
+};
+
+// Interface cho hiển thị trang chủ (User)
 export interface Voucher {
   id: number;
   code: string;
@@ -10,31 +15,43 @@ export interface Voucher {
   description: string;
   minAmount: number;
   expiredAt: string;
-  usageLimit?: number;
-  usageCount?: number;
+  // Các field khác nếu cần hiển thị
 }
-export interface VoucherValidation {
-  isValid: boolean;
-  discount: number;
-  message: string;
+
+// Interface cho Admin quản lý (Full data)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface VoucherAdmin extends Voucher {
+    discountType: string;
+    discountValue: number;
+    usageLimit: number;
+    startDate: string;
+    endDate: string;
+    isActive: boolean;
 }
+
 export interface VoucherCheckResponse {
   message: string;
   discountAmount: number;
   code: string;
 }
 
-// 1. API Lấy danh sách voucher
+// =============================
+// API CHO USER (PUBLIC)
+// =============================
+
+// 1. Lấy danh sách voucher khả dụng (Trang chủ)
 export const getVouchers = async (): Promise<Voucher[]> => {
   try {
-    const res = await axios.get(API_URL);
+    // 🔥 Gọi vào endpoint 'available' thay vì root
+    const res = await axios.get(`${API_URL}/available`);
+    
     // Map dữ liệu từ Backend sang Frontend interface
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return res.data.map((v: any) => ({
       id: v.voucherId,
       code: v.code,
-      title: v.title,
-      description: v.description,
+      title: v.title,         // Backend đã format sẵn title
+      description: v.description, // Backend đã format sẵn description
       minAmount: v.minOrderValue,
       expiredAt: v.expiredAt
     }));
@@ -44,7 +61,7 @@ export const getVouchers = async (): Promise<Voucher[]> => {
   }
 };
 
-// 2. API Kiểm tra voucher (Code cũ giữ nguyên)
+// 2. API Kiểm tra voucher (Checkout)
 export const checkVoucherAPI = async (code: string, orderTotal: number): Promise<VoucherCheckResponse | null> => {
   try {
     const res = await axios.get(`${API_URL}/check`, {
@@ -60,7 +77,7 @@ export const checkVoucherAPI = async (code: string, orderTotal: number): Promise
   }
 };
 
-// 3. Hàm tương thích cho component cũ (nếu component bạn dùng tên là validateVoucher)
+// 3. Hàm validation (Helper cho UI)
 export const validateVoucher = async (code: string, total: number) => {
     try {
         const res = await checkVoucherAPI(code, total);
@@ -69,12 +86,62 @@ export const validateVoucher = async (code: string, total: number) => {
             discount: res?.discountAmount || 0,
             message: res?.message || "Áp dụng thành công"
         };
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
         return {
             isValid: false,
             discount: 0,
             message: e.message
         };
+    }
+};
+
+// =============================
+// API CHO ADMIN (PRIVATE)
+// =============================
+
+// 4. Lấy tất cả voucher (Admin)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const getAllVouchersAdmin = async (): Promise<any[]> => {
+    try {
+        const res = await axios.get(API_URL, getAuthHeader());
+        return res.data;
+    } catch  {
+        return [];
+    }
+};
+
+// 5. Tạo mới (Admin)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const createVoucherAPI = async (voucher: any) => {
+    try {
+        const res = await axios.post(API_URL, voucher, getAuthHeader());
+        return { success: true, message: res.data.message };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        return { success: false, message: error.response?.data?.message || "Lỗi tạo voucher" };
+    }
+};
+
+// 6. Cập nhật (Admin)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const updateVoucherAPI = async (id: number, voucher: any) => {
+    try {
+        const res = await axios.put(`${API_URL}/${id}`, voucher, getAuthHeader());
+        return { success: true, message: res.data.message };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        return { success: false, message: error.response?.data?.message || "Lỗi cập nhật" };
+    }
+};
+
+// 7. Xóa (Admin)
+export const deleteVoucherAPI = async (id: number) => {
+    try {
+        const res = await axios.delete(`${API_URL}/${id}`, getAuthHeader());
+        return { success: true, message: res.data.message };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        return { success: false, message: error.response?.data?.message || "Lỗi xóa" };
     }
 };

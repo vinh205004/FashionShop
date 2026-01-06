@@ -187,11 +187,13 @@ namespace BackEnd.Controllers
             product.Description = model.Description;
             product.CategoryId = model.CategoryId;
 
-            // 🔥 QUAN TRỌNG: Nếu là 0 thì phải lưu là null
+            // 👇 CẬP NHẬT SỐ LƯỢNG KHO
+            product.Quantity = model.Quantity;
+
+            // Nếu là 0 thì phải lưu là null
             product.SubCategoryId = (model.SubCategoryId == 0) ? null : model.SubCategoryId;
 
             // 2. Xóa dữ liệu cũ (Ảnh, Size, Badge)
-            // (Xóa trắng để add lại từ đầu -> Đảm bảo đồng bộ với Frontend)
             _context.ProductImages.RemoveRange(product.ProductImages);
             _context.ProductSizes.RemoveRange(product.ProductSizes);
             _context.ProductBadges.RemoveRange(product.ProductBadges);
@@ -201,13 +203,12 @@ namespace BackEnd.Controllers
             // Xử lý Ảnh
             if (model.Images != null && model.Images.Count > 0)
             {
-                // Dùng vòng lặp for i để xác định IsMain chính xác hơn IndexOf (tránh lỗi nếu có 2 ảnh giống url nhau)
                 for (int i = 0; i < model.Images.Count; i++)
                 {
                     product.ProductImages.Add(new ProductImage
                     {
                         ImageUrl = model.Images[i],
-                        IsMain = (i == 0) // Ảnh đầu tiên là ảnh chính
+                        IsMain = (i == 0)
                     });
                 }
             }
@@ -233,7 +234,6 @@ namespace BackEnd.Controllers
             }
             catch (Exception ex)
             {
-                // Bắt lỗi để biết tại sao (ví dụ lỗi khóa ngoại)
                 return BadRequest("Lỗi cập nhật: " + ex.InnerException?.Message ?? ex.Message);
             }
         }
@@ -284,10 +284,9 @@ namespace BackEnd.Controllers
         }
         // POST: api/Products/create
         [HttpPost("create")]
-        [Authorize(Roles = "Admin")] // 🔥 Chỉ Admin mới được thêm
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateProduct([FromBody] ProductCreateDto model)
         {
-            // 1. Validate dữ liệu cơ bản
             if (model == null) return BadRequest("Dữ liệu không hợp lệ");
 
             // 2. Tạo đối tượng Product chính
@@ -299,13 +298,15 @@ namespace BackEnd.Controllers
                 CategoryId = model.CategoryId,
                 SubCategoryId = (model.SubCategoryId == 0) ? null : model.SubCategoryId,
 
-                // Mặc định tạo ảnh rỗng để tránh lỗi null nếu frontend không gửi
+                // 👇 THÊM SỐ LƯỢNG KHI TẠO MỚI
+                Quantity = model.Quantity,
+
                 ProductImages = new List<ProductImage>(),
                 ProductSizes = new List<ProductSize>(),
                 ProductBadges = new List<ProductBadge>()
             };
 
-            // 3. Xử lý Ảnh (Product Images)
+            // 3. Xử lý Ảnh
             if (model.Images != null && model.Images.Count > 0)
             {
                 foreach (var imgUrl in model.Images)
@@ -313,12 +314,12 @@ namespace BackEnd.Controllers
                     newProduct.ProductImages.Add(new ProductImage
                     {
                         ImageUrl = imgUrl,
-                        IsMain = (model.Images.IndexOf(imgUrl) == 0) // Ảnh đầu tiên là ảnh chính
+                        IsMain = (model.Images.IndexOf(imgUrl) == 0)
                     });
                 }
             }
 
-            // 4. Xử lý Size (Product Sizes)
+            // 4. Xử lý Size
             if (model.Sizes != null && model.Sizes.Count > 0)
             {
                 foreach (var size in model.Sizes)
@@ -330,7 +331,7 @@ namespace BackEnd.Controllers
                 }
             }
 
-            // 5. Xử lý Badge (Product Badges)
+            // 5. Xử lý Badge
             if (model.Badges != null && model.Badges.Count > 0)
             {
                 foreach (var badge in model.Badges)

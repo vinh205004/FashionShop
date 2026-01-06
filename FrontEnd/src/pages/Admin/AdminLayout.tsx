@@ -7,7 +7,8 @@ import {
   Users, 
   LogOut, 
   Menu,
-  Bell
+  Bell,
+  Tag
 } from 'lucide-react';
 
 const AdminLayout = () => {
@@ -25,6 +26,7 @@ const AdminLayout = () => {
     { path: '/admin/products', icon: <Package size={20} />, label: 'Sản phẩm' },
     { path: '/admin/orders', icon: <ShoppingCart size={20} />, label: 'Đơn hàng' },
     { path: '/admin/customers', icon: <Users size={20} />, label: 'Khách hàng' },
+    { path: '/admin/vouchers', icon: <Tag size={20} />, label: 'Mã giảm giá' }, 
   ];
 
   return (
@@ -39,9 +41,7 @@ const AdminLayout = () => {
         {/* Menu Items */}
         <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto">
           {menuItems.map((item) => {
-            // Logic kiểm tra Active thông minh hơn
-            // Nếu là trang chủ ('/admin') thì cần khớp chính xác
-            // Các trang con (vd: '/admin/products') thì chỉ cần bắt đầu bằng path đó là được
+            // Logic kiểm tra Active
             const isActive = item.exact 
                 ? location.pathname === item.path
                 : location.pathname.startsWith(item.path);

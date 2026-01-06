@@ -23,6 +23,8 @@ import UserProfile from "./pages/Auth/UserProfile";
 import Dashboard from "./pages/Admin/Dashboard";
 import ProductManager from "./pages/Admin/ProductManager";
 import OrderManager from "./pages/Admin/OrderManager";
+import UserManager from "./pages/Admin/UserManager";
+import VoucherManager from "./pages/Admin/VoucherManager";
 
 function App() {
   return (
@@ -57,7 +59,8 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path="products" element={<ProductManager />} />
             <Route path="orders" element={<OrderManager />} />
-            <Route path="customers" element={<div>Trang quản lý user (Coming Soon)</div>} />
+            <Route path="customers" element={<UserManager />} />
+            <Route path="vouchers" element={<VoucherManager />} />
           </Route>
         </Route>
 

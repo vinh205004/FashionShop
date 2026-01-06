@@ -10,8 +10,8 @@ import type { Category } from "../services/categoryService";
 // Components & Contexts
 import ProductCard from "../components/ProductCard";
 import Pagination from "../components/Pagination";
-import { useToast } from "../contexts/ToastContext"; // 👈 Import Toast
-import { useCart } from "../contexts/CartContext";   // 👈 Import Cart
+import { useToast } from "../contexts/ToastContext"; 
+import { useCart } from "../contexts/CartContext";   
 
 const CategoryPage: React.FC = () => {
   const { category, subcategory } = useParams<{ category: string; subcategory: string }>();
@@ -139,18 +139,24 @@ const CategoryPage: React.FC = () => {
 
   // --- HANDLERS ---
 
-  // 👇 Logic thêm vào giỏ hàng (Tự chọn size đầu tiên)
+  // 👇 Logic thêm vào giỏ hàng
   const handleAddToCart = (product: ProductMock) => {
-    // 1. Tìm size mặc định
+    // 1. Check hết hàng
+    if (product.quantity <= 0) {
+        addToast("Sản phẩm đã hết hàng!", 'error');
+        return;
+    }
+
+    // 2. Tìm size mặc định
     const defaultSize = (product.sizes && product.sizes.length > 0) ? product.sizes[0] : "M";
 
-    // 2. Tạo object sản phẩm với size mặc định
+    // 3. Tạo object sản phẩm với size mặc định
     const productToAdd = {
        ...product,
        selectedSize: defaultSize
     };
 
-    // 3. Gọi hàm thêm vào giỏ
+    // 4. Gọi hàm thêm vào giỏ
     addToCart(productToAdd, 1); 
     
     addToast(`Đã thêm "${product.title}" (Size: ${defaultSize}) vào giỏ`, 'success');
@@ -329,22 +335,31 @@ const CategoryPage: React.FC = () => {
             <>
               {/* Grid Sản Phẩm */}
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {products.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    title={product.title}
-                    price={product.price}
-                    images={product.images}
-                    badges={product.badges}
-                    onCardClick={() => navigate(`/product/${product.id}`)}
-                    // 👇 THÊM NÚT MUA HÀNG VÀO ĐÂY
-                    onAddToCart={(e) => {
-                        e.stopPropagation();
-                        handleAddToCart(product);
-                    }}
-                  />
-                ))}
+                {products.map((p) => {
+                    const isOutOfStock = p.quantity <= 0;
+                    const displayBadges = isOutOfStock 
+                        ? ["HẾT HÀNG", ...(p.badges || [])] 
+                        : p.badges;
+
+                    return (
+                        <div key={p.id} className={isOutOfStock ? "opacity-75 grayscale-[50%]" : ""}>
+                            <ProductCard
+                                product={p}
+                                title={p.title}
+                                price={p.price}
+                                images={p.images}
+                                badges={displayBadges} // Truyền badge Hết hàng
+                                onCardClick={() => navigate(`/product/${p.id}`)}
+                                onAddToCart={(e) => {
+                                    e.stopPropagation();
+                                    if (!isOutOfStock) {
+                                        handleAddToCart(p);
+                                    }
+                                }}
+                            />
+                        </div>
+                    );
+                })}
               </div>
 
               {/* Phân trang */}
