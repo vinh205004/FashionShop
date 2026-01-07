@@ -284,7 +284,7 @@ const SearchResultPage: React.FC = () => {
                                     }
 
                                     const defaultSize = (p.sizes && p.sizes.length > 0) ? p.sizes[0] : "M";
-                                    const productToAdd = { ...p, selectedSize: defaultSize };
+                                    const productToAdd = { ...p, selectedSize: defaultSize, stock: p.quantity };
 
                                     addToCart(productToAdd, 1);
                                     addToast(`Đã thêm "${p.title}" (Size: ${defaultSize}) vào giỏ`, 'success');

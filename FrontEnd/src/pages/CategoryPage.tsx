@@ -153,6 +153,7 @@ const CategoryPage: React.FC = () => {
     // 3. Tạo object sản phẩm với size mặc định
     const productToAdd = {
        ...product,
+       stock: product.quantity,
        selectedSize: defaultSize
     };
 

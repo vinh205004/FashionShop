@@ -71,8 +71,9 @@ namespace BackEnd
             // ==========================================
             // 4. FIX LỖI LOOP JSON & CONTROLLERS
             // ==========================================
-            builder.Services.AddControllers().AddJsonOptions(x =>
-                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+            builder.Services.AddControllers().AddJsonOptions(options =>{
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            });
 
             builder.Services.AddEndpointsApiExplorer();
 

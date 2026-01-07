@@ -4,9 +4,15 @@ import type { ProductMock } from './mockProducts';
 const API_URL = 'https://localhost:7248/api/Carts';
 const STORAGE_KEY = 'fashion_shop_cart'; 
 
+// 1. HELPER LẤY USER ID & TOKEN
 const getCurrentUserId = (): number | null => {
   const userId = localStorage.getItem("userId"); 
   return userId ? parseInt(userId) : null; 
+};
+
+const getAuthHeader = () => {
+    const token = localStorage.getItem("token");
+    return { headers: { Authorization: `Bearer ${token}` } };
 };
 
 export interface CartItemDTO {
@@ -14,38 +20,72 @@ export interface CartItemDTO {
   title: string;
   price: number;
   images: string[];
-  quantity: number;
+  quantity: number;     
+  stock: number;        
   sizes?: string[];
   selectedSize?: string;
   cartItemId?: number; 
   badges?: string[];
 }
 
-// 1. HÀM LẤY GIỎ HÀNG
+// 🔥 2. SMART MAPPER (GIỐNG ORDER SERVICE)
+// Giúp bắt cả trường hợp Backend trả về PascalCase (Title) hoặc camelCase (title)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mapCartItemFromBackend = (item: any): CartItemDTO => {
+    // Helper lấy giá trị an toàn
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const val = (obj: any, key: string) => obj?.[key] || obj?.[key.charAt(0).toUpperCase() + key.slice(1)];
+    
+    const product = val(item, 'product');
+    
+    // Xử lý ảnh an toàn
+    const productImages = val(product, 'productImages') || [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const images = Array.isArray(productImages) ? productImages.map((img: any) => val(img, 'imageUrl')) : [];
+
+    // Xử lý sizes an toàn
+    const productSizes = val(product, 'productSizes') || [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const sizes = Array.isArray(productSizes) ? productSizes.map((s: any) => val(s, 'sizeName')) : [];
+
+    // Xử lý badges an toàn
+    const productBadges = val(product, 'productBadges') || [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const badges = Array.isArray(productBadges) ? productBadges.map((b: any) => val(b, 'badgeName')) : [];
+
+    return {
+        id: val(item, 'productId'),
+        cartItemId: val(item, 'cartItemId'),
+        title: product ? val(product, 'title') : "Sản phẩm lỗi",
+        price: product ? val(product, 'price') : 0,
+        stock: product ? (val(product, 'quantity') || 0) : 0, // Lấy tồn kho
+        images: images.length > 0 ? images : ["https://via.placeholder.com/150"],
+        badges: badges,
+        quantity: val(item, 'quantity'),
+        selectedSize: val(item, 'size'),
+        sizes: sizes
+    };
+};
+
+// 3. HÀM LẤY GIỎ HÀNG
 export const fetchCart = async (): Promise<CartItemDTO[]> => {
   const userId = getCurrentUserId();
 
   // CHẾ ĐỘ 1: GỌI API (User đã đăng nhập)
   if (userId) {
     try {
-      const res = await axios.get(`${API_URL}/${userId}`);
-      if (!res.data || !res.data.cartItems) return [];
+      // Thêm token vào header nếu cần bảo mật
+      const res = await axios.get(`${API_URL}/${userId}`, getAuthHeader());
+      
+      const data = res.data;
+      // Backend có thể trả về data.cartItems hoặc data.CartItems, hoặc mảng trực tiếp
+      const itemsList = data.cartItems || data.CartItems || (Array.isArray(data) ? data : []);
+
+      if (!Array.isArray(itemsList)) return [];
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return res.data.cartItems.map((item: any) => ({
-        id: item.productId,
-        cartItemId: item.cartItemId,
-        title: item.product.title,
-        price: item.product.price,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        images: item.product.productImages?.map((img: any) => img.imageUrl) || [],
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        badges: item.product.productBadges?.map((b: any) => b.badgeName) || [],
-        quantity: item.quantity,
-        selectedSize: item.size,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        sizes: item.product.productSizes?.map((s: any) => s.sizeName) || [] 
-      }));
+      return itemsList.map((item: any) => mapCartItemFromBackend(item));
+
     } catch (e) {
       console.error('Lỗi API Cart:', e);
       return [];
@@ -59,10 +99,10 @@ export const fetchCart = async (): Promise<CartItemDTO[]> => {
   }
 };
 
-// 2. HÀM THÊM VÀO GIỎ
+// 4. HÀM THÊM VÀO GIỎ
 export const addToCart = async (product: ProductMock, qty = 1): Promise<CartItemDTO[]> => {
   const userId = getCurrentUserId();
-  const size = product.selectedSize || ""; // Nếu không chọn thì lưu rỗng
+  const size = product.selectedSize || ""; 
 
   if (userId) {
     try {
@@ -71,28 +111,28 @@ export const addToCart = async (product: ProductMock, qty = 1): Promise<CartItem
         productId: product.id,
         quantity: qty,
         size: size
-      });
+      }, getAuthHeader()); // 🔥 Thêm Auth Header
     } catch (e) {
       console.error('Lỗi thêm giỏ API:', e);
     }
   } else {
     // Logic LocalStorage 
     const items = await fetchCart();
-    // Tìm xem món này + size này đã có chưa?
     const existingIndex = items.findIndex(i => i.id === product.id && i.selectedSize === size);
     
     const nextItems = [...items];
     if (existingIndex > -1) {
-      // Có rồi -> Cộng dồn
       nextItems[existingIndex].quantity += qty;
+      // Update lại stock mới nhất
+      nextItems[existingIndex].stock = product.quantity; 
     } else {
-      // Chưa có -> Thêm mới
       const newItem: CartItemDTO = {
         id: product.id,
         title: product.title,
         price: product.price,
         images: product.images,
         quantity: qty,
+        stock: product.quantity, 
         selectedSize: size,
         sizes: product.sizes,
         badges: product.badges
@@ -104,24 +144,21 @@ export const addToCart = async (product: ProductMock, qty = 1): Promise<CartItem
   return await fetchCart();
 };
 
-// 3. HÀM CẬP NHẬT SỐ LƯỢNG
+// 5. HÀM CẬP NHẬT SỐ LƯỢNG
 export const updateCartItem = async (productId: number, size: string, qty: number): Promise<CartItemDTO[]> => {
   const userId = getCurrentUserId();
-  
-  // Logic tìm item chuẩn xác: Phải trùng cả ID và Size
   const findCondition = (i: CartItemDTO) => i.id === productId && (i.selectedSize || "") === (size || "");
 
   if (userId) {
     try {
       const items = await fetchCart();
-      // Tìm item dựa trên cả ID và Size
       const itemToUpdate = items.find(findCondition);
 
       if (itemToUpdate && itemToUpdate.cartItemId) {
         await axios.put(`${API_URL}/update`, {
           cartItemId: itemToUpdate.cartItemId,
           quantity: qty
-        });
+        }, getAuthHeader()); // 🔥 Thêm Auth Header
       }
     } catch (e) {
       console.error("Lỗi update số lượng:", e);
@@ -138,7 +175,7 @@ export const updateCartItem = async (productId: number, size: string, qty: numbe
   return await fetchCart();
 };
 
-// 4. HÀM ĐỔI SIZE
+// 6. HÀM ĐỔI SIZE
 export const updateCartItemSize = async (productId: number, selectedSize?: string): Promise<CartItemDTO[]> => {
   const userId = getCurrentUserId();
   
@@ -148,11 +185,12 @@ export const updateCartItemSize = async (productId: number, selectedSize?: strin
       const itemToUpdate = items.find(i => i.id === productId);
 
       if (itemToUpdate && itemToUpdate.cartItemId) {
+        // 🔥 Logic an toàn hơn: Gửi cả số lượng hiện tại + size mới
         await axios.put(`${API_URL}/update`, {
           cartItemId: itemToUpdate.cartItemId,
-          quantity: 0, // Giữ nguyên số lượng
+          quantity: itemToUpdate.quantity, // Giữ nguyên số lượng
           size: selectedSize
-        });
+        }, getAuthHeader());
       }
     } catch (e) {
       console.error("Lỗi đổi size:", e);
@@ -165,27 +203,23 @@ export const updateCartItemSize = async (productId: number, selectedSize?: strin
   return await fetchCart();
 };
 
-// 5. XÓA SẢN PHẨM
+// 7. XÓA SẢN PHẨM
 export const removeCartItem = async (id: number, size: string): Promise<CartItemDTO[]> => {
   const userId = getCurrentUserId();
-  // Chuẩn hóa size (tránh null/undefined)
   const sizeToDelete = size || ""; 
 
   if (userId) {
     try {
       const items = await fetchCart();
-      // Tìm item khớp cả ID và Size để lấy đúng cartItemId trong SQL
       const itemToDelete = items.find(i => i.id === id && (i.selectedSize || "") === sizeToDelete);
       
       if (itemToDelete && itemToDelete.cartItemId) {
-        await axios.delete(`${API_URL}/remove/${itemToDelete.cartItemId}`);
-        console.log(">> Đã xóa khỏi SQL Server");
+        await axios.delete(`${API_URL}/remove/${itemToDelete.cartItemId}`, getAuthHeader());
       }
     } catch (e) {
       console.error("Lỗi xóa API:", e);
     }
   } else {
-    // Logic LocalStorage: Giữ lại những món KHÔNG trùng (ID + Size)
     const items = await fetchCart();
     const next = items.filter(i => !(i.id === id && (i.selectedSize || "") === sizeToDelete));
     localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
@@ -194,24 +228,19 @@ export const removeCartItem = async (id: number, size: string): Promise<CartItem
   return await fetchCart();
 };
 
-// 6. HÀM XÓA HẾT GIỎ
+// 8. HÀM XÓA HẾT GIỎ
 export const clearCart = async (): Promise<CartItemDTO[]> => {
   const userId = getCurrentUserId();
   
   if (userId) {
     try {
-// GỌI API DELETE
-      await axios.delete(`${API_URL}/clear/${userId}`);
-      console.log(">> Đã xóa sạch giỏ hàng trên SQL Server");
+      await axios.delete(`${API_URL}/clear/${userId}`, getAuthHeader());
     } catch (e) {
       console.error("Lỗi xóa giỏ hàng API:", e);
     }
   } else {
-    // Xóa LocalStorage (cho khách vãng lai)
     localStorage.removeItem(STORAGE_KEY);
   }
-  
-  // Trả về mảng rỗng để UI cập nhật
   return [];
 };
 

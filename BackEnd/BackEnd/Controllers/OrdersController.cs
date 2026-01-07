@@ -33,9 +33,8 @@ namespace BackEnd.Controllers
                 .FirstOrDefaultAsync(c => c.UserId == request.UserId);
 
             if (cart == null || !cart.CartItems.Any())
-            {
                 return BadRequest(new { message = "Giỏ hàng trống, không thể đặt hàng!" });
-            }
+
             var itemsToBuy = cart.CartItems.ToList();
             if (request.SelectedProductIds != null && request.SelectedProductIds.Any())
             {
@@ -45,16 +44,24 @@ namespace BackEnd.Controllers
             }
 
             if (!itemsToBuy.Any())
-            {
                 return BadRequest(new { message = "Vui lòng chọn ít nhất một sản phẩm để thanh toán!" });
+
+            // [MỚI] Validate số lượng tồn kho ngay khi đặt (Optional nhưng nên có)
+            foreach (var item in itemsToBuy)
+            {
+                if (item.Product.Quantity < item.Quantity)
+                {
+                    return BadRequest(new { message = $"Sản phẩm '{item.Product.Title}' không đủ hàng (Còn: {item.Product.Quantity})" });
+                }
             }
+
             // 2. Tính toán tiền
-            decimal totalAmount = cart.CartItems.Sum(item => item.Quantity * item.Product.Price);
+            decimal totalAmount = itemsToBuy.Sum(item => item.Quantity * item.Product.Price);
             decimal discountAmount = 0;
-            decimal shippingFee = totalAmount > 500000 ? 0 : 30000; // Trên 500k freeship
+            decimal shippingFee = totalAmount > 500000 ? 0 : 30000;
             int? voucherId = null;
 
-            // Xử lý Voucher (Nếu có)
+            // Xử lý Voucher
             if (!string.IsNullOrEmpty(request.VoucherCode))
             {
                 var voucher = await _context.Vouchers
@@ -70,30 +77,16 @@ namespace BackEnd.Controllers
                         else
                             discountAmount = voucher.DiscountValue;
 
-                        // Không giảm quá tổng tiền
                         if (discountAmount > totalAmount) discountAmount = totalAmount;
-
                         voucherId = voucher.VoucherId;
+
+                        // Trừ lượt dùng voucher (Optional)
+                        // voucher.UsageLimit -= 1;
                     }
                 }
             }
 
             decimal finalAmount = totalAmount + shippingFee - discountAmount;
-
-            // --- XỬ LÝ TRẠNG THÁI THANH TOÁN ---
-            // Chuẩn hóa chuỗi phương thức thanh toán
-            string paymentMethodUpper = request.PaymentMethod.ToUpper();
-            string paymentStatus = "Unpaid";
-
-            // Chỉ khi thanh toán Online thì mới set là Paid ngay lúc tạo
-            if (paymentMethodUpper == "VNPAY" || paymentMethodUpper == "MOMO" || paymentMethodUpper == "BANKING")
-            {
-                paymentStatus = "Unpaid";
-            }
-            else
-            {
-                paymentStatus = "Unpaid"; // COD hoặc Cash
-            }
 
             // 3. Tạo Order Header
             var order = new Order
@@ -103,13 +96,9 @@ namespace BackEnd.Controllers
                 ReceiverName = request.ReceiverName,
                 ReceiverPhone = request.ReceiverPhone,
                 ShippingAddress = request.ShippingAddress,
-
-                // Luôn là Pending để chờ Admin duyệt tìm Shipper
-                OrderStatus = "Pending",
-
+                OrderStatus = "Pending", // Mới tạo là Pending (Chưa trừ kho)
                 PaymentMethod = request.PaymentMethod,
-                PaymentStatus = paymentStatus, // Sử dụng biến đã xử lý ở trên
-
+                PaymentStatus = "Unpaid",
                 ShippingFee = shippingFee,
                 DiscountAmount = discountAmount,
                 TotalAmount = finalAmount,
@@ -117,7 +106,7 @@ namespace BackEnd.Controllers
             };
 
             _context.Orders.Add(order);
-            await _context.SaveChangesAsync(); // Lưu để sinh OrderId
+            await _context.SaveChangesAsync();
 
             // 4. Lưu chi tiết đơn hàng
             foreach (var item in itemsToBuy)
@@ -133,8 +122,8 @@ namespace BackEnd.Controllers
                 });
             }
 
-            // 5. Xóa sạch giỏ hàng
-            _context.CartItems.RemoveRange(cart.CartItems);
+            // 5. Xóa sản phẩm đã mua khỏi giỏ hàng
+            _context.CartItems.RemoveRange(itemsToBuy);
             await _context.SaveChangesAsync();
 
             return Ok(new
@@ -176,7 +165,7 @@ namespace BackEnd.Controllers
         }
 
         // =================================================================
-        // PHẦN 2: API DÀNH CHO ADMIN
+        // PHẦN 2: API DÀNH CHO ADMIN & XỬ LÝ KHO
         // =================================================================
 
         // API 4: LẤY TẤT CẢ ĐƠN HÀNG (ADMIN)
@@ -192,7 +181,7 @@ namespace BackEnd.Controllers
                     o.OrderId,
                     o.OrderDate,
                     o.TotalAmount,
-                    o.OrderStatus, // Pending, Confirmed, Cancelled...
+                    o.OrderStatus,
                     o.PaymentMethod,
                     o.PaymentStatus,
                     CustomerName = o.ReceiverName ?? o.User.FullName,
@@ -203,76 +192,95 @@ namespace BackEnd.Controllers
             return Ok(orders);
         }
 
-        // API 5: CẬP NHẬT TRẠNG THÁI (DUYỆT/HỦY/HOÀN THÀNH)
+        // 🔥 API 5: CẬP NHẬT TRẠNG THÁI & TRỪ/CỘNG KHO (SỬA LẠI CHO CHUẨN)
         [HttpPut("status/{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Customer")]
         public async Task<IActionResult> UpdateOrderStatus(int id, [FromBody] UpdateStatusDto model)
         {
-            var order = await _context.Orders.FindAsync(id);
+            Console.WriteLine($"--- DEBUG UpdateOrderStatus: OrderId = {id}, NewStatus = {model.Status} ---");
+            var order = await _context.Orders
+                .Include(o => o.OrderDetails) // Lấy chi tiết đơn
+                .FirstOrDefaultAsync(o => o.OrderId == id);
+
             if (order == null) return NotFound("Không tìm thấy đơn hàng");
 
-            // Cập nhật trạng thái
-            order.OrderStatus = model.Status;
+            string oldStatus = order.OrderStatus;
+            string newStatus = model.Status;
 
-            // 🔥 LOGIC ECOSYSTEM: Tự động cập nhật thanh toán khi giao thành công
-            // Nếu đơn hàng chuyển sang trạng thái "Completed" (Shipper giao xong)
-            // VÀ đang là Unpaid (COD) -> Chuyển thành Paid
-            if (model.Status == "Completed" && order.PaymentStatus == "Unpaid")
+            if (oldStatus == "Cancelled") return BadRequest("Đơn hàng đã hủy, không thể thay đổi!");
+            if (oldStatus == "Completed") return BadRequest("Đơn hàng đã hoàn thành!");
+
+            // ==========================================
+            // LOGIC 1: DUYỆT ĐƠN (Pending -> Confirmed) => TRỪ KHO
+            // ==========================================
+            if (oldStatus == "Pending" && newStatus == "Confirmed")
+            {
+                foreach (var item in order.OrderDetails)
+                {
+                    // Lấy sản phẩm từ DB ra để trừ
+                    var product = await _context.Products.FindAsync(item.ProductId);
+                    if (product != null)
+                    {
+                        // Kiểm tra tồn kho
+                        if (product.Quantity < item.Quantity)
+                        {
+                            return BadRequest(new { message = $"Sản phẩm '{product.Title}' không đủ hàng (Còn: {product.Quantity})" });
+                        }
+                        // Trừ
+                        product.Quantity -= item.Quantity;
+                        _context.Products.Update(product); // Đánh dấu update
+                    }
+                }
+            }
+
+            // ==========================================
+            // LOGIC 2: HỦY ĐƠN (Cancelled) => HOÀN KHO
+            // ==========================================
+            else if (newStatus == "Cancelled")
+            {
+                // Chỉ hoàn kho nếu đơn đã từng được duyệt (đã trừ)
+                if (oldStatus == "Confirmed" || oldStatus == "Shipping")
+                {
+                    foreach (var item in order.OrderDetails)
+                    {
+                        var product = await _context.Products.FindAsync(item.ProductId);
+                        if (product != null)
+                        {
+                            product.Quantity += item.Quantity;
+                            _context.Products.Update(product); // Đánh dấu update
+                        }
+                    }
+                }
+            }
+
+            // Cập nhật trạng thái đơn
+            order.OrderStatus = newStatus;
+
+            // Nếu giao xong mà chưa trả tiền -> Set thành Paid
+            if (newStatus == "Completed" && order.PaymentStatus == "Unpaid")
             {
                 order.PaymentStatus = "Paid";
             }
 
-            await _context.SaveChangesAsync();
-            return Ok(new { message = $"Đã cập nhật trạng thái thành: {model.Status}" });
+            try
+            {
+                await _context.SaveChangesAsync(); // Lưu tất cả thay đổi (Order + Product)
+                return Ok(new { message = $"Thành công: {newStatus}" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "Lỗi Database: " + ex.Message });
+            }
         }
-        // API 6: KHÁCH HÀNG TỰ HỦY ĐƠN
-        // PUT: api/Orders/cancel/5
-        [HttpPut("cancel/{id}")]
-        [Authorize] // Bắt buộc phải đăng nhập (nhưng không cần là Admin)
-        public async Task<IActionResult> CancelOrderByUser(int id)
-        {
-            // 1. Lấy ID người dùng hiện tại từ Token
-            // (Đảm bảo Claim "UserId" khớp với lúc bạn tạo Token khi Login)
-            var userIdClaim = User.FindFirst("UserId");
-            if (userIdClaim == null)
-            {
-                return Unauthorized("Không xác định được danh tính người dùng.");
-            }
-            int currentUserId = int.Parse(userIdClaim.Value);
 
-            // 2. Tìm đơn hàng
-            var order = await _context.Orders.FindAsync(id);
-            if (order == null)
-            {
-                return NotFound("Không tìm thấy đơn hàng.");
-            }
-
-            // 3. KIỂM TRA QUYỀN SỞ HỮU
-            // Nếu người đang gọi API không phải chủ đơn hàng -> Chặn ngay
-            if (order.UserId != currentUserId)
-            {
-                return Forbid("Bạn không có quyền hủy đơn hàng của người khác!");
-            }
-
-            // 4. KIỂM TRA TRẠNG THÁI ĐƠN
-            // Chỉ cho phép hủy khi đơn còn đang "Pending" (Chờ duyệt)
-            if (order.OrderStatus != "Pending")
-            {
-                return BadRequest("Đơn hàng đã được duyệt hoặc đang giao, không thể hủy!");
-            }
-
-            // 5. Thực hiện hủy
-            order.OrderStatus = "Cancelled";
-
-            // (Optional) Nếu đơn đã thanh toán online (Paid) thì cần lưu log để Admin hoàn tiền
-            // if (order.PaymentStatus == "Paid") { ... }
-
-            await _context.SaveChangesAsync();
-
-            return Ok(new { message = "Hủy đơn hàng thành công!" });
-        }
+        // API 6: KHÁCH HÀNG TỰ HỦY ĐƠN (Đã tích hợp logic hoàn kho vào API 5)
+        // Tuy nhiên giữ lại API này nếu muốn tách biệt quyền hạn, nhưng tốt nhất nên gọi chung API 5
+        // Ở đây mình xóa API Cancel riêng lẻ cũ để dùng chung logic ở trên cho đồng bộ.
     }
 
-
-   
+    // DTO Helper
+    public class UpdateStatusDto
+    {
+        public string Status { get; set; } // Confirmed, Shipping, Completed, Cancelled
+    }
 }

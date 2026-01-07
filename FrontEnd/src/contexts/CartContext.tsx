@@ -1,18 +1,23 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import type { ProductMock } from '../services/mockProducts';
 import * as cartService from '../services/cartService';
-import type { CartItemDTO } from '../services/cartService';
 
-export type CartItem = CartItemDTO;
+// 👇 1. Định nghĩa lại CartItem có trường stock
+export interface CartItem {
+  id: number;
+  title: string;
+  price: number;
+  images: string[];
+  quantity: number;     // Số lượng khách mua
+  stock: number;        // 👇 QUAN TRỌNG: Số lượng tồn kho
+  selectedSize?: string;
+  badges?: string[];
+}
 
 interface CartContextValue {
   items: CartItem[];
-  // 👇 Đổi tên addItem -> addToCart để khớp với SearchResultPage
   addToCart: (product: ProductMock, qty?: number) => Promise<void>;
-  
-  // 👇 Đổi tên removeItem -> removeFromCart cho đồng bộ
   removeFromCart: (id: number, size: string) => Promise<void>;
-  
   updateQty: (id: number, size: string, qty: number) => Promise<void>;
   updateSize: (id: number, size?: string) => Promise<void>;
   clear: () => Promise<void>;
@@ -29,7 +34,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const initCart = async () => {
       try {
         const data = await cartService.fetchCart();
-        if (mounted) setItems(data);
+        // Ép kiểu dữ liệu từ service về CartItem (đảm bảo có stock)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const mappedData = data.map((item: any) => ({
+            ...item,
+            stock: item.stock !== undefined ? item.stock : 999 // Fallback nếu dữ liệu cũ chưa có stock
+        }));
+        
+        if (mounted) setItems(mappedData);
       } catch (error) {
         console.error("Lỗi tải giỏ hàng:", error);
       }
@@ -38,21 +50,26 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => { mounted = false; };
   }, []);
 
-  // 2. Thêm sản phẩm (Đã đổi tên hàm)
+  // 2. Thêm sản phẩm
   const addToCart = async (product: ProductMock, qty = 1) => {
     try {
+      // Gọi service để thêm
       const updatedItems = await cartService.addToCart(product, qty);
-      setItems(updatedItems);
+      
+      // Cập nhật State
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setItems(updatedItems as any); 
     } catch (e) {
       console.warn('Lỗi thêm giỏ hàng:', e);
     }
   };
 
-  // 3. Xóa sản phẩm (Đã đổi tên hàm)
+  // 3. Xóa sản phẩm
   const removeFromCart = async (id: number, size: string) => {
     try {
       const updatedItems = await cartService.removeCartItem(id, size);
-      setItems(updatedItems);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setItems(updatedItems as any);
     } catch (e) {
       console.warn('Lỗi xóa sản phẩm:', e);
     }
@@ -61,8 +78,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // 4. Cập nhật số lượng
   const updateQty = async (id: number, size: string, qty: number) => {
     try {
+      // Logic chặn số lượng đã được xử lý ở UI (Cart.tsx)
+      // Ở đây chỉ việc gọi service update
       const updatedItems = await cartService.updateCartItem(id, size, qty);
-      setItems(updatedItems);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setItems(updatedItems as any);
     } catch (e) {
       console.warn('Lỗi cập nhật số lượng:', e);
     }
@@ -72,7 +92,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const updateSize = async (id: number, size?: string) => {
     try {
       const updatedItems = await cartService.updateCartItemSize(id, size);
-      setItems(updatedItems);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setItems(updatedItems as any);
     } catch (e) {
       console.warn('Lỗi cập nhật size:', e);
     }
@@ -82,7 +103,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const clear = async () => {
     try {
       const updatedItems = await cartService.clearCart();
-      setItems(updatedItems);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setItems(updatedItems as any);
     } catch (e) {
       console.warn('Lỗi xóa giỏ hàng:', e);
     }

@@ -84,6 +84,7 @@ const Home: React.FC = () => {
      // 3. Tạo object
      const productToAdd = {
         ...product,
+        stock: product.quantity,
         selectedSize: defaultSize
      };
 

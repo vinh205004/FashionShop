@@ -75,6 +75,7 @@ const Product: React.FC = () => {
 
       const productToSend = { 
         ...product, 
+        stock: product.quantity,
         selectedSize: selectedSize 
       };
 

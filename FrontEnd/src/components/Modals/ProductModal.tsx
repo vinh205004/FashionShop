@@ -18,17 +18,20 @@ interface Props {
   productToEdit?: ProductMock | null;
 }
 
+// Danh sách các size phổ biến
+const AVAILABLE_SIZES = ["S", "M", "L", "XL", "XXL", "Free Size"];
+
 const ProductModal = ({ isOpen, onClose, onSuccess, categories, allSubCategories, productToEdit }: Props) => {
   const { addToast } = useToast();
 
   const [formData, setFormData] = useState({
     title: "",
     price: 0,
-    quantity: 100, // Default quantity
+    quantity: 100, 
     description: "",
     categoryId: 0,
     subCategoryId: 0,
-    sizes: [] as string[],
+    sizes: [] as string[], // Mảng chứa các size đã chọn
     images: [] as string[],
     badges: [] as string[]
   });
@@ -41,25 +44,31 @@ const ProductModal = ({ isOpen, onClose, onSuccess, categories, allSubCategories
   useEffect(() => {
     if (isOpen) {
         if (productToEdit) {
-            // --- SỬA ---
+            // --- LOAD DỮ LIỆU CŨ ---
             setFormData({
                 title: productToEdit.title,
                 price: productToEdit.price,
-                quantity: productToEdit.quantity || 0, // Load quantity cũ
+                quantity: productToEdit.quantity || 0,
                 description: productToEdit.description || "",
                 categoryId: productToEdit.categoryId,
                 subCategoryId: productToEdit.subCategoryId, 
-                sizes: productToEdit.sizes || [],
+                sizes: productToEdit.sizes || [], // Load size cũ
                 images: productToEdit.images || [],
                 badges: productToEdit.badges || []
             });
         } else {
-            // --- THÊM ---
+            // --- FORM MỚI ---
             const firstCatId = categories[0]?.categoryId || 0;
             const validSubs = allSubCategories.filter(s => s.categoryId === firstCatId);
             
             setFormData({
-                title: "", price: 0, quantity: 100, description: "", images: [""], sizes: ["S", "M"], badges: [],
+                title: "", 
+                price: 0, 
+                quantity: 100, 
+                description: "", 
+                images: [""], 
+                sizes: ["S", "M"], // Mặc định chọn S và M
+                badges: [],
                 categoryId: firstCatId,
                 subCategoryId: validSubs[0]?.subCategoryId || 0
             });
@@ -76,10 +85,23 @@ const ProductModal = ({ isOpen, onClose, onSuccess, categories, allSubCategories
       }));
   };
 
+  // Logic chọn/bỏ chọn Size
+  const handleSizeToggle = (size: string) => {
+    setFormData(prev => {
+        const currentSizes = prev.sizes || [];
+        if (currentSizes.includes(size)) {
+            // Nếu đã có -> Xóa đi
+            return { ...prev, sizes: currentSizes.filter(s => s !== size) };
+        } else {
+            // Nếu chưa có -> Thêm vào
+            return { ...prev, sizes: [...currentSizes, size] };
+        }
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Gọi API create/update
       if (productToEdit) await updateProduct(productToEdit.id, formData);
       else await createProduct(formData);
       
@@ -139,7 +161,7 @@ const ProductModal = ({ isOpen, onClose, onSuccess, categories, allSubCategories
                 </div>
             </div>
 
-            {/* Hàng 3: SubCategory */}
+            {/* Hàng 3: SubCategory & Size */}
             <div className="grid grid-cols-2 gap-4">
                 <div>
                     <label className="text-sm font-medium">Loại sản phẩm (Sub)</label>
@@ -156,8 +178,27 @@ const ProductModal = ({ isOpen, onClose, onSuccess, categories, allSubCategories
                         {filteredSubCategories.length === 0 && <option value="0">Không có mục con</option>}
                     </select>
                 </div>
+                
+                {/* 👇 MỚI: Phần chọn Size */}
                 <div>
-                    {/* Placeholder cho size/badge nếu cần */}
+                    <label className="text-sm font-medium block mb-1">Kích thước (Size)</label>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                        {AVAILABLE_SIZES.map(size => (
+                            <button
+                                key={size}
+                                type="button" // Quan trọng: type button để không submit form
+                                onClick={() => handleSizeToggle(size)}
+                                className={`px-3 py-1.5 rounded text-xs font-semibold border transition-colors ${
+                                    formData.sizes.includes(size)
+                                        ? "bg-blue-600 text-white border-blue-600"
+                                        : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                                }`}
+                            >
+                                {size}
+                            </button>
+                        ))}
+                    </div>
+                    {formData.sizes.length === 0 && <span className="text-red-500 text-xs">Vui lòng chọn ít nhất 1 size</span>}
                 </div>
             </div>
 
