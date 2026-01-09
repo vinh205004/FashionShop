@@ -43,10 +43,7 @@ public partial class FashionShopDbContext : DbContext
 
     public virtual DbSet<Voucher> Vouchers { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=ADMIN-PC\\MSSQLSERVER22;Database=FashionShopDB;Trusted_Connection=True;TrustServerCertificate=True;");
-
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Cart>(entity =>
@@ -56,11 +53,9 @@ public partial class FashionShopDbContext : DbContext
             entity.HasIndex(e => e.UserId, "UQ__Carts__1788CC4D60AA1AEB").IsUnique();
 
             entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+                .HasDefaultValueSql("(CURRENT_TIMESTAMP)");
             entity.Property(e => e.UpdatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+                .HasDefaultValueSql("(CURRENT_TIMESTAMP)");
 
             entity.HasOne(d => d.User).WithOne(p => p.Cart)
                 .HasForeignKey<Cart>(d => d.UserId)
@@ -74,8 +69,7 @@ public partial class FashionShopDbContext : DbContext
             entity.HasIndex(e => new { e.CartId, e.ProductId, e.Size }, "UQ_Cart_Product_Size").IsUnique();
 
             entity.Property(e => e.AddedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+                .HasDefaultValueSql("(CURRENT_TIMESTAMP)");
             entity.Property(e => e.Quantity).HasDefaultValue(1);
             entity.Property(e => e.Size).HasMaxLength(20);
 
@@ -121,8 +115,7 @@ public partial class FashionShopDbContext : DbContext
                 .HasDefaultValue(0m)
                 .HasColumnType("decimal(18, 2)");
             entity.Property(e => e.OrderDate)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+                .HasDefaultValueSql("(CURRENT_TIMESTAMP)");
             entity.Property(e => e.OrderStatus)
                 .HasMaxLength(50)
                 .HasDefaultValue("Pending");
@@ -175,8 +168,7 @@ public partial class FashionShopDbContext : DbContext
 
             entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.PaymentDate)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+                .HasDefaultValueSql("(CURRENT_TIMESTAMP)");
             entity.Property(e => e.PaymentMethod).HasMaxLength(50);
             entity.Property(e => e.ResponseCode).HasMaxLength(50);
             entity.Property(e => e.Status)
@@ -260,8 +252,7 @@ public partial class FashionShopDbContext : DbContext
 
             entity.Property(e => e.Address).HasMaxLength(255);
             entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+                .HasDefaultValueSql("(CURRENT_TIMESTAMP)");
             entity.Property(e => e.Email)
                 .HasMaxLength(100)
                 .IsUnicode(false);
@@ -291,12 +282,12 @@ public partial class FashionShopDbContext : DbContext
                 .HasMaxLength(10)
                 .IsUnicode(false);
             entity.Property(e => e.DiscountValue).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.EndDate).HasColumnType("datetime");
+            entity.Property(e => e.EndDate);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.MinOrderValue)
                 .HasDefaultValue(0m)
                 .HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.StartDate).HasColumnType("datetime");
+            entity.Property(e => e.StartDate);
             entity.Property(e => e.UsageLimit).HasDefaultValue(100);
         });
 

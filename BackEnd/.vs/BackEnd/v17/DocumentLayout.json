@@ -3,76 +3,76 @@
   "WorkspaceRootPath": "D:\\FashionShop\\BackEnd\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\controllers\\userscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\controllers\\userscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\controllers\\orderscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\controllers\\orderscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\models\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\models\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\dtos\\productdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\dtos\\productdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\models\\voucher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\models\\voucher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\models\\fashionshopdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\models\\fashionshopdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\controllers\\voucherscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\controllers\\voucherscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\dtos\\voucherdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\dtos\\voucherdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\controllers\\subcategoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\controllers\\subcategoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\controllers\\userscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\controllers\\userscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\controllers\\categoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\controllers\\categoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\controllers\\paymentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\controllers\\paymentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\models\\createorderrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\models\\createorderrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\models\\updateprofilerequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\models\\updateprofilerequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\controllers\\orderscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\controllers\\orderscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\controllers\\dashboardcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\controllers\\dashboardcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\dtos\\updatestatusdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\dtos\\updatestatusdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\controllers\\categoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\controllers\\categoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\dtos\\createsubdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\dtos\\createsubdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\controllers\\cartscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\controllers\\cartscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\controllers\\subcategoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\controllers\\subcategoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\models\\jwtsettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\models\\jwtsettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\models\\voucher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\models\\voucher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\models\\updateprofilerequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\models\\updateprofilerequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\models\\updatecartrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\models\\updatecartrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\models\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\models\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\models\\paymentrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\models\\paymentrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\models\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -83,22 +83,6 @@
       "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\models\\authmodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\models\\updatecartrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\models\\updatecartrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\controllers\\paymentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\controllers\\paymentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\controllers\\cartscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\controllers\\cartscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\models\\addtocartrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\models\\addtocartrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -107,8 +91,28 @@
       "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\models\\cart.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\models\\paymentrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\models\\paymentrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\models\\createorderrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\models\\createorderrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\models\\jwtsettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\models\\jwtsettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\dtos\\productdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\dtos\\productdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\dtos\\voucherdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\dtos\\voucherdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\dtos\\updatestatusdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\dtos\\updatestatusdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|d:\\fashionshop\\backend\\backend\\dtos\\createsubdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2C34CBB8-4DF6-4B6F-BF99-F680F64E543C}|BackEnd\\BackEnd.csproj|solutionrelative:backend\\dtos\\createsubdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -118,7 +122,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 10,
+          "SelectedChildIndex": 9,
           "Children": [
             {
               "$type": "Bookmark",
@@ -146,32 +150,85 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Product.cs",
-              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\Product.cs",
-              "RelativeDocumentMoniker": "BackEnd\\Models\\Product.cs",
-              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\Product.cs",
-              "RelativeToolTip": "BackEnd\\Models\\Product.cs",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAYwBIAAAAqAAAAAAAAAA==",
+              "DocumentIndex": 5,
+              "Title": "PaymentsController.cs",
+              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\PaymentsController.cs",
+              "RelativeDocumentMoniker": "BackEnd\\Controllers\\PaymentsController.cs",
+              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\PaymentsController.cs",
+              "RelativeToolTip": "BackEnd\\Controllers\\PaymentsController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAFYAAAAuAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-06T08:42:38.331Z",
+              "WhenOpened": "2025-11-29T16:51:21.437Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ProductsController.cs",
+              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\ProductsController.cs",
+              "RelativeDocumentMoniker": "BackEnd\\Controllers\\ProductsController.cs",
+              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\ProductsController.cs",
+              "RelativeToolTip": "BackEnd\\Controllers\\ProductsController.cs",
+              "ViewState": "AgIAAG4BAAAAAAAAAAAwwGkBAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-29T12:44:10.039Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "SubCategoriesController.cs",
+              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\SubCategoriesController.cs",
+              "RelativeDocumentMoniker": "BackEnd\\Controllers\\SubCategoriesController.cs",
+              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\SubCategoriesController.cs",
+              "RelativeToolTip": "BackEnd\\Controllers\\SubCategoriesController.cs",
+              "ViewState": "AgIAAA0AAAAAAAAAAAAmwAUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-29T13:07:59.017Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "UsersController.cs",
+              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\UsersController.cs",
+              "RelativeDocumentMoniker": "BackEnd\\Controllers\\UsersController.cs",
+              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\UsersController.cs",
+              "RelativeToolTip": "BackEnd\\Controllers\\UsersController.cs",
+              "ViewState": "AgIAADMAAAAAAAAAAAAqwD0AAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-06T08:05:28.007Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "VouchersController.cs",
+              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\VouchersController.cs",
+              "RelativeDocumentMoniker": "BackEnd\\Controllers\\VouchersController.cs",
+              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\VouchersController.cs",
+              "RelativeToolTip": "BackEnd\\Controllers\\VouchersController.cs",
+              "ViewState": "AgIAAHAAAAAAAAAAAAAkwAcAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-29T15:13:27.133Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "FashionShopDbContext.cs",
+              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\FashionShopDbContext.cs",
+              "RelativeDocumentMoniker": "BackEnd\\Models\\FashionShopDbContext.cs",
+              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\FashionShopDbContext.cs",
+              "RelativeToolTip": "BackEnd\\Models\\FashionShopDbContext.cs",
+              "ViewState": "AgIAAP8AAAAAAAAAAAAAACEBAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-09T14:59:00.969Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 6,
-              "Title": "Voucher.cs",
-              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\Voucher.cs",
-              "RelativeDocumentMoniker": "BackEnd\\Models\\Voucher.cs",
-              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\Voucher.cs",
-              "RelativeToolTip": "BackEnd\\Models\\Voucher.cs",
-              "ViewState": "AgIAAAUAAAAAAAAAAAAxwAwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-06T08:15:56.349Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
               "Title": "OrdersController.cs",
               "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\OrdersController.cs",
               "RelativeDocumentMoniker": "BackEnd\\Controllers\\OrdersController.cs",
@@ -184,80 +241,46 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "CreateOrderRequest.cs",
-              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\CreateOrderRequest.cs",
-              "RelativeDocumentMoniker": "BackEnd\\Models\\CreateOrderRequest.cs",
-              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\CreateOrderRequest.cs",
-              "RelativeToolTip": "BackEnd\\Models\\CreateOrderRequest.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAA6AAAAAAAAAA==",
+              "DocumentIndex": 7,
+              "Title": "DashboardController.cs",
+              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\DashboardController.cs",
+              "RelativeDocumentMoniker": "BackEnd\\Controllers\\DashboardController.cs",
+              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\DashboardController.cs",
+              "RelativeToolTip": "BackEnd\\Controllers\\DashboardController.cs",
+              "ViewState": "AgIAABMAAAAAAAAAAAAQwE8AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-29T16:01:06.565Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Program.cs",
-              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Program.cs",
-              "RelativeDocumentMoniker": "BackEnd\\Program.cs",
-              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Program.cs",
-              "RelativeToolTip": "BackEnd\\Program.cs",
-              "ViewState": "AgIAACsAAAAAAAAAAAAQwDAAAAA4AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-29T12:51:10.389Z",
+              "WhenOpened": "2026-01-02T03:02:29.698Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "VouchersController.cs",
-              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\VouchersController.cs",
-              "RelativeDocumentMoniker": "BackEnd\\Controllers\\VouchersController.cs",
-              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\VouchersController.cs",
-              "RelativeToolTip": "BackEnd\\Controllers\\VouchersController.cs",
-              "ViewState": "AgIAAHAAAAAAAAAAAAAkwAcAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-29T15:13:27.133Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "ProductDTOs.cs",
-              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\DTOs\\ProductDTOs.cs",
-              "RelativeDocumentMoniker": "BackEnd\\DTOs\\ProductDTOs.cs",
-              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\DTOs\\ProductDTOs.cs",
-              "RelativeToolTip": "BackEnd\\DTOs\\ProductDTOs.cs",
-              "ViewState": "AgIAAAUAAAAAAAAAAAAxwBIAAAAuAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-02T08:27:13.459Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "ProductsController.cs",
-              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\ProductsController.cs",
-              "RelativeDocumentMoniker": "BackEnd\\Controllers\\ProductsController.cs",
-              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\ProductsController.cs",
-              "RelativeToolTip": "BackEnd\\Controllers\\ProductsController.cs",
-              "ViewState": "AgIAAG4BAAAAAAAAAAAwwGkBAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-29T12:44:10.039Z"
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 8,
-              "Title": "VoucherDto.cs",
-              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\DTOs\\VoucherDto.cs",
-              "RelativeDocumentMoniker": "BackEnd\\DTOs\\VoucherDto.cs",
-              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\DTOs\\VoucherDto.cs",
-              "RelativeToolTip": "BackEnd\\DTOs\\VoucherDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "Title": "CategoriesController.cs",
+              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\CategoriesController.cs",
+              "RelativeDocumentMoniker": "BackEnd\\Controllers\\CategoriesController.cs",
+              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\CategoriesController.cs",
+              "RelativeToolTip": "BackEnd\\Controllers\\CategoriesController.cs",
+              "ViewState": "AgIAAHoAAAAAAAAAAAAAAI8AAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-06T08:18:56.244Z"
+              "WhenOpened": "2025-11-29T13:06:16.97Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 9,
+              "Title": "CartsController.cs",
+              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\CartsController.cs",
+              "RelativeDocumentMoniker": "BackEnd\\Controllers\\CartsController.cs",
+              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\CartsController.cs",
+              "RelativeToolTip": "BackEnd\\Controllers\\CartsController.cs",
+              "ViewState": "AgIAAG0AAAAAAAAAAAAiwIAAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-29T14:46:12.347Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
               "Title": "AuthController.cs",
               "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "BackEnd\\Controllers\\AuthController.cs",
@@ -270,31 +293,46 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "CategoriesController.cs",
-              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\CategoriesController.cs",
-              "RelativeDocumentMoniker": "BackEnd\\Controllers\\CategoriesController.cs",
-              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\CategoriesController.cs",
-              "RelativeToolTip": "BackEnd\\Controllers\\CategoriesController.cs",
-              "ViewState": "AgIAAHoAAAAAAAAAAAAAAI8AAAAFAAAAAAAAAA==",
+              "DocumentIndex": 11,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Program.cs",
+              "RelativeDocumentMoniker": "BackEnd\\Program.cs",
+              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Program.cs",
+              "RelativeToolTip": "BackEnd\\Program.cs",
+              "ViewState": "AgIAACsAAAAAAAAAAAAQwAkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-29T13:06:16.97Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "UsersController.cs",
-              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\UsersController.cs",
-              "RelativeDocumentMoniker": "BackEnd\\Controllers\\UsersController.cs",
-              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\UsersController.cs",
-              "RelativeToolTip": "BackEnd\\Controllers\\UsersController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEoAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-06T08:05:28.007Z"
+              "WhenOpened": "2025-11-29T12:51:10.389Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 12,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\appsettings.json",
+              "RelativeDocumentMoniker": "BackEnd\\appsettings.json",
+              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\appsettings.json",
+              "RelativeToolTip": "BackEnd\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAABrAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-12-02T15:23:25.215Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Voucher.cs",
+              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\Voucher.cs",
+              "RelativeDocumentMoniker": "BackEnd\\Models\\Voucher.cs",
+              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\Voucher.cs",
+              "RelativeToolTip": "BackEnd\\Models\\Voucher.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-06T08:15:56.349Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
               "Title": "UpdateProfileRequest.cs",
               "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\UpdateProfileRequest.cs",
               "RelativeDocumentMoniker": "BackEnd\\Models\\UpdateProfileRequest.cs",
@@ -302,7 +340,60 @@
               "RelativeToolTip": "BackEnd\\Models\\UpdateProfileRequest.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAArAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-02T15:38:03.906Z"
+              "WhenOpened": "2025-12-02T15:38:03.906Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "UpdateCartRequest.cs",
+              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\UpdateCartRequest.cs",
+              "RelativeDocumentMoniker": "BackEnd\\Models\\UpdateCartRequest.cs",
+              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\UpdateCartRequest.cs",
+              "RelativeToolTip": "BackEnd\\Models\\UpdateCartRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-30T04:25:35.009Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "Product.cs",
+              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\Product.cs",
+              "RelativeDocumentMoniker": "BackEnd\\Models\\Product.cs",
+              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\Product.cs",
+              "RelativeToolTip": "BackEnd\\Models\\Product.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAYwBIAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-06T08:42:38.331Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "PaymentRequest.cs",
+              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\PaymentRequest.cs",
+              "RelativeDocumentMoniker": "BackEnd\\Models\\PaymentRequest.cs",
+              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\PaymentRequest.cs",
+              "RelativeToolTip": "BackEnd\\Models\\PaymentRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-29T16:50:37.314Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "Order.cs",
+              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\Order.cs",
+              "RelativeDocumentMoniker": "BackEnd\\Models\\Order.cs",
+              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\Order.cs",
+              "RelativeToolTip": "BackEnd\\Models\\Order.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAAwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-02T03:13:05.01Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -314,23 +405,88 @@
               "RelativeToolTip": "BackEnd\\Models\\AuthModels.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-30T06:36:45.086Z"
+              "WhenOpened": "2025-11-30T06:36:45.086Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "DashboardController.cs",
-              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\DashboardController.cs",
-              "RelativeDocumentMoniker": "BackEnd\\Controllers\\DashboardController.cs",
-              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\DashboardController.cs",
-              "RelativeToolTip": "BackEnd\\Controllers\\DashboardController.cs",
-              "ViewState": "AgIAABMAAAAAAAAAAAAQwE8AAAABAAAAAAAAAA==",
+              "DocumentIndex": 20,
+              "Title": "AddToCartRequest.cs",
+              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\AddToCartRequest.cs",
+              "RelativeDocumentMoniker": "BackEnd\\Models\\AddToCartRequest.cs",
+              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\AddToCartRequest.cs",
+              "RelativeToolTip": "BackEnd\\Models\\AddToCartRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAA4AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-02T03:02:29.698Z"
+              "WhenOpened": "2025-11-29T14:44:51.106Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 21,
+              "Title": "Cart.cs",
+              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\Cart.cs",
+              "RelativeDocumentMoniker": "BackEnd\\Models\\Cart.cs",
+              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\Cart.cs",
+              "RelativeToolTip": "BackEnd\\Models\\Cart.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAZAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-29T14:37:56.139Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "CreateOrderRequest.cs",
+              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\CreateOrderRequest.cs",
+              "RelativeDocumentMoniker": "BackEnd\\Models\\CreateOrderRequest.cs",
+              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\CreateOrderRequest.cs",
+              "RelativeToolTip": "BackEnd\\Models\\CreateOrderRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAA6AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-29T16:01:06.565Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "JwtSettings.cs",
+              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\JwtSettings.cs",
+              "RelativeDocumentMoniker": "BackEnd\\Models\\JwtSettings.cs",
+              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\JwtSettings.cs",
+              "RelativeToolTip": "BackEnd\\Models\\JwtSettings.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-02T15:25:45.763Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "ProductDTOs.cs",
+              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\DTOs\\ProductDTOs.cs",
+              "RelativeDocumentMoniker": "BackEnd\\DTOs\\ProductDTOs.cs",
+              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\DTOs\\ProductDTOs.cs",
+              "RelativeToolTip": "BackEnd\\DTOs\\ProductDTOs.cs",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAxwBIAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-02T08:27:13.459Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "VoucherDto.cs",
+              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\DTOs\\VoucherDto.cs",
+              "RelativeDocumentMoniker": "BackEnd\\DTOs\\VoucherDto.cs",
+              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\DTOs\\VoucherDto.cs",
+              "RelativeToolTip": "BackEnd\\DTOs\\VoucherDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-06T08:18:56.244Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
               "Title": "UpdateStatusDto.cs",
               "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\DTOs\\UpdateStatusDto.cs",
               "RelativeDocumentMoniker": "BackEnd\\DTOs\\UpdateStatusDto.cs",
@@ -342,7 +498,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 27,
               "Title": "CreateSubDto.cs",
               "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\DTOs\\CreateSubDto.cs",
               "RelativeDocumentMoniker": "BackEnd\\DTOs\\CreateSubDto.cs",
@@ -351,126 +507,6 @@
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-05T12:30:56.132Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "SubCategoriesController.cs",
-              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\SubCategoriesController.cs",
-              "RelativeDocumentMoniker": "BackEnd\\Controllers\\SubCategoriesController.cs",
-              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\SubCategoriesController.cs",
-              "RelativeToolTip": "BackEnd\\Controllers\\SubCategoriesController.cs",
-              "ViewState": "AgIAAA0AAAAAAAAAAAAmwAUAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-29T13:07:59.017Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 20,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\appsettings.json",
-              "RelativeDocumentMoniker": "BackEnd\\appsettings.json",
-              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\appsettings.json",
-              "RelativeToolTip": "BackEnd\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-12-02T15:23:25.215Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 17,
-              "Title": "JwtSettings.cs",
-              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\JwtSettings.cs",
-              "RelativeDocumentMoniker": "BackEnd\\Models\\JwtSettings.cs",
-              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\JwtSettings.cs",
-              "RelativeToolTip": "BackEnd\\Models\\JwtSettings.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAsAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-02T15:25:45.763Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 18,
-              "Title": "Order.cs",
-              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\Order.cs",
-              "RelativeDocumentMoniker": "BackEnd\\Models\\Order.cs",
-              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\Order.cs",
-              "RelativeToolTip": "BackEnd\\Models\\Order.cs",
-              "ViewState": "AgIAAAcAAAAAAAAAAAAzwAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-02T03:13:05.01Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 21,
-              "Title": "UpdateCartRequest.cs",
-              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\UpdateCartRequest.cs",
-              "RelativeDocumentMoniker": "BackEnd\\Models\\UpdateCartRequest.cs",
-              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\UpdateCartRequest.cs",
-              "RelativeToolTip": "BackEnd\\Models\\UpdateCartRequest.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAArAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-30T04:25:35.009Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 22,
-              "Title": "PaymentsController.cs",
-              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\PaymentsController.cs",
-              "RelativeDocumentMoniker": "BackEnd\\Controllers\\PaymentsController.cs",
-              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\PaymentsController.cs",
-              "RelativeToolTip": "BackEnd\\Controllers\\PaymentsController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAFYAAAAuAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-29T16:51:21.437Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 26,
-              "Title": "PaymentRequest.cs",
-              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\PaymentRequest.cs",
-              "RelativeDocumentMoniker": "BackEnd\\Models\\PaymentRequest.cs",
-              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\PaymentRequest.cs",
-              "RelativeToolTip": "BackEnd\\Models\\PaymentRequest.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAArAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-29T16:50:37.314Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 23,
-              "Title": "CartsController.cs",
-              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\CartsController.cs",
-              "RelativeDocumentMoniker": "BackEnd\\Controllers\\CartsController.cs",
-              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Controllers\\CartsController.cs",
-              "RelativeToolTip": "BackEnd\\Controllers\\CartsController.cs",
-              "ViewState": "AgIAAG0AAAAAAAAAAAAiwIAAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-29T14:46:12.347Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 24,
-              "Title": "AddToCartRequest.cs",
-              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\AddToCartRequest.cs",
-              "RelativeDocumentMoniker": "BackEnd\\Models\\AddToCartRequest.cs",
-              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\AddToCartRequest.cs",
-              "RelativeToolTip": "BackEnd\\Models\\AddToCartRequest.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAA4AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-29T14:44:51.106Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 25,
-              "Title": "Cart.cs",
-              "DocumentMoniker": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\Cart.cs",
-              "RelativeDocumentMoniker": "BackEnd\\Models\\Cart.cs",
-              "ToolTip": "D:\\FashionShop\\BackEnd\\BackEnd\\Models\\Cart.cs",
-              "RelativeToolTip": "BackEnd\\Models\\Cart.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAZAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-29T14:37:56.139Z"
             }
           ]
         }

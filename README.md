@@ -10,4 +10,4 @@ Frontend sử dụng **React + Vite + TailwindCSS**.
 
 Backend sử dụng ASP.NET Core Web API 8
 
-Database: SQLSEVER
+Database: PostgreSQL

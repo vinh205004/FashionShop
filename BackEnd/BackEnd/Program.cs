@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
 
 namespace BackEnd
 {
@@ -13,6 +14,7 @@ namespace BackEnd
     {
         public static void Main(string[] args)
         {
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
             var builder = WebApplication.CreateBuilder(args);
             // ==========================================
             // 0. QUAN TRỌNG: NGĂN .NET ĐỔI TÊN CLAIM
@@ -62,11 +64,13 @@ namespace BackEnd
             // ==========================================
             // 3. KẾT NỐI DATABASE
             // ==========================================
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-                ?? "Server=ADMIN-PC\\MSSQLSERVER22;Database=FashionShopDB;Trusted_Connection=True;TrustServerCertificate=True;";
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+            if (string.IsNullOrEmpty(connectionString))
+                throw new Exception("⚠️ Chưa cấu hình Connection String trong appsettings.json");
 
             builder.Services.AddDbContext<FashionShopDbContext>(options =>
-                options.UseSqlServer(connectionString));
+                options.UseNpgsql(connectionString));
 
             // ==========================================
             // 4. FIX LỖI LOOP JSON & CONTROLLERS
