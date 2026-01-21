@@ -3,6 +3,7 @@ using System;
 using BackEnd.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BackEnd.Migrations
 {
     [DbContext(typeof(FashionShopDbContext))]
-    partial class FashionShopDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260121071531_AddIsActiveToProduct")]
+    partial class AddIsActiveToProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -111,9 +114,6 @@ namespace BackEnd.Migrations
 
                     b.HasKey("CategoryId")
                         .HasName("PK__Categori__19093A0BF03A1A5A");
-
-                    b.HasIndex("CategoryCode")
-                        .IsUnique();
 
                     b.ToTable("Categories");
                 });
@@ -341,16 +341,7 @@ namespace BackEnd.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("IsActive")
-                        .HasDatabaseName("IX_Products_IsActive");
-
-                    b.HasIndex("Price")
-                        .HasDatabaseName("IX_Products_Price");
-
                     b.HasIndex("SubCategoryId");
-
-                    b.HasIndex("Title")
-                        .HasDatabaseName("IX_Products_Title");
 
                     b.ToTable("Products");
                 });
@@ -449,8 +440,6 @@ namespace BackEnd.Migrations
 
                     b.HasKey("SubCategoryId")
                         .HasName("PK__SubCateg__26BE5B19EAA89FF4");
-
-                    b.HasIndex("SubCategoryCode");
 
                     b.ToTable("SubCategories");
                 });

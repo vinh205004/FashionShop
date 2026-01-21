@@ -67,7 +67,7 @@ namespace BackEnd.Controllers
 
         // API: Lấy danh sách Voucher khả dụng (Hiển thị ở Trang chủ)
         // GET: api/Vouchers/available
-        [HttpGet("available")] // 🔥 Đổi route để không trùng với Admin
+        [HttpGet("available")] 
         public async Task<IActionResult> GetAvailableVouchers()
         {
             var today = DateTime.Now;
@@ -81,7 +81,6 @@ namespace BackEnd.Controllers
                 {
                     v.VoucherId,
                     v.Code,
-                    // Tự tạo tiêu đề đẹp để hiện lên App
                     Title = v.DiscountType == "PERCENT" ? $"Giảm {v.DiscountValue:N0}%" : $"Giảm {v.DiscountValue:N0}đ",
                     Description = v.MinOrderValue > 0 ? $"Đơn tối thiểu {v.MinOrderValue:N0}đ" : "Áp dụng cho mọi đơn hàng",
                     v.MinOrderValue,
@@ -98,7 +97,7 @@ namespace BackEnd.Controllers
         // PHẦN 2: API ADMIN (QUẢN LÝ CRUD)
         // ==========================================
 
-        // 1. LẤY TẤT CẢ VOUCHER (Admin xem hết, kể cả hết hạn)
+        // 1. LẤY TẤT CẢ VOUCHER
         // GET: api/Vouchers
         [HttpGet]
         [Authorize(Roles = "Admin")]

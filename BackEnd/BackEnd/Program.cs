@@ -7,6 +7,7 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
+using System.Security.Claims;
 
 namespace BackEnd
 {
@@ -16,10 +17,12 @@ namespace BackEnd
         {
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
             var builder = WebApplication.CreateBuilder(args);
+            // Đăng ký Cloudinary Service
+            builder.Services.AddScoped<BackEnd.Services.ICloudinaryService, BackEnd.Services.CloudinaryService>();
             // ==========================================
-            // 0. QUAN TRỌNG: NGĂN .NET ĐỔI TÊN CLAIM
+            // 0. NGĂN .NET ĐỔI TÊN CLAIM
             // ==========================================
-            // Dòng này giúp giữ nguyên tên claim là "UserId" thay vì bị đổi thành đường dẫn dài ngoằng
+            // giữ nguyên tên claim là "UserId"
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             // ==========================================
             // 1. CẤU HÌNH JWT (XÁC THỰC)
@@ -41,7 +44,8 @@ namespace BackEnd
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtSettings.Issuer,
                     ValidAudience = jwtSettings.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
+                    RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
                 };
             });
 
@@ -82,7 +86,7 @@ namespace BackEnd
             builder.Services.AddEndpointsApiExplorer();
 
             // ==========================================
-            // 5. CẤU HÌNH SWAGGER (CÓ NÚT NHẬP TOKEN)
+            // 5. CẤU HÌNH SWAGGER 
             // ==========================================
             builder.Services.AddSwaggerGen(c =>
             {
@@ -120,7 +124,7 @@ namespace BackEnd
             // 6. PIPELINE (LUỒNG XỬ LÝ)
             // ==========================================
 
-            // 1. CORS phải đứng đầu để chặn/cho phép ngay từ cửa
+            // CORS đứng đầu để chặn/cho phép ngay từ cửa
             app.UseCors();
 
             if (app.Environment.IsDevelopment())
@@ -131,11 +135,9 @@ namespace BackEnd
 
             app.UseHttpsRedirection();
 
-            // 2. Cho phép truy cập ảnh tĩnh (trong folder wwwroot)
-            // Cần thiết cho tính năng hiển thị ảnh sản phẩm sau này
             app.UseStaticFiles();
 
-            // 3. Xác thực & Phân quyền
+            // Xác thực & Phân quyền
             app.UseAuthentication();
             app.UseAuthorization();
 

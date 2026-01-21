@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BackEnd.Models;
-using Microsoft.AspNetCore.Authorization; // 👈 1. Import thư viện bảo mật
+using Microsoft.AspNetCore.Authorization;
 
 namespace BackEnd.Controllers
 {
@@ -22,12 +22,10 @@ namespace BackEnd.Controllers
         }
 
         // GET: api/Categories
-        // API này CÔNG KHAI (Public) để trang chủ hiển thị Menu
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
         {
             return await _context.Categories
-                // Giữ nguyên logic join bảng của bạn để hiển thị menu đa cấp
                 .Include(c => c.CategorySubCategories)
                     .ThenInclude(cs => cs.SubCategory)
                 .ToListAsync();
@@ -48,7 +46,7 @@ namespace BackEnd.Controllers
         }
 
         // PUT: api/Categories/5
-        // 🔥 BẢO MẬT: Chỉ Admin được sửa
+        // Chỉ Admin được sửa
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutCategory(int id, Category category)
@@ -96,7 +94,7 @@ namespace BackEnd.Controllers
             return Ok(subs);
         }
         // POST: api/Categories
-        // 🔥 BẢO MẬT: Chỉ Admin được thêm mới
+        // Chỉ Admin được thêm mới
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Category>> PostCategory(Category category)

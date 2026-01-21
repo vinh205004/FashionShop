@@ -44,7 +44,7 @@ namespace BackEnd.Controllers
                 TransactionId = Guid.NewGuid().ToString() // Mã giao dịch giả
             };
 
-            // Nếu là COD thì coi như xong luôn (nhưng chưa Paid, chỉ là ghi nhận phương thức)
+            // Nếu là COD thì coi như xong luôn (chưa Paid)
             if (request.PaymentMethod == "COD")
             {
                 payment.Status = "Pending";
@@ -77,10 +77,10 @@ namespace BackEnd.Controllers
 
             // 1. Cập nhật bảng Payment
             payment.Status = "Success";
-            payment.ResponseCode = "00"; // Mã thành công chuẩn VNPay
+            payment.ResponseCode = "00"; 
             payment.PaymentDate = DateTime.Now;
 
-            // 2. Cập nhật bảng Order (Quan trọng nhất)
+            // 2. Cập nhật bảng Order
             var order = await _context.Orders.FindAsync(payment.OrderId);
             if (order != null)
             {

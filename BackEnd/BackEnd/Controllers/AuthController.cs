@@ -31,8 +31,6 @@ namespace BackEnd.Controllers
 
             var claims = new List<Claim>
             {
-                // 👇 QUAN TRỌNG: 2 Dòng này giúp API Hủy Đơn lấy được ID người dùng
-                // Đừng dùng ClaimTypes.NameIdentifier vì .NET hay tự đổi tên nó
                 new Claim("UserId", user.UserId.ToString()),
 
                 new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),

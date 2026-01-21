@@ -46,7 +46,7 @@ namespace BackEnd.Controllers
             if (!itemsToBuy.Any())
                 return BadRequest(new { message = "Vui lòng chọn ít nhất một sản phẩm để thanh toán!" });
 
-            // [MỚI] Validate số lượng tồn kho ngay khi đặt (Optional nhưng nên có)
+            // Validate số lượng tồn kho ngay khi đặt
             foreach (var item in itemsToBuy)
             {
                 if (item.Product.Quantity < item.Quantity)
@@ -79,9 +79,7 @@ namespace BackEnd.Controllers
 
                         if (discountAmount > totalAmount) discountAmount = totalAmount;
                         voucherId = voucher.VoucherId;
-
-                        // Trừ lượt dùng voucher (Optional)
-                        // voucher.UsageLimit -= 1;
+                        voucher.UsageLimit -= 1;
                     }
                 }
             }
@@ -96,7 +94,7 @@ namespace BackEnd.Controllers
                 ReceiverName = request.ReceiverName,
                 ReceiverPhone = request.ReceiverPhone,
                 ShippingAddress = request.ShippingAddress,
-                OrderStatus = "Pending", // Mới tạo là Pending (Chưa trừ kho)
+                OrderStatus = "Pending", // Mới tạo là Pending
                 PaymentMethod = request.PaymentMethod,
                 PaymentStatus = "Unpaid",
                 ShippingFee = shippingFee,
@@ -192,7 +190,7 @@ namespace BackEnd.Controllers
             return Ok(orders);
         }
 
-        // 🔥 API 5: CẬP NHẬT TRẠNG THÁI & TRỪ/CỘNG KHO (SỬA LẠI CHO CHUẨN)
+        // CẬP NHẬT TRẠNG THÁI & TRỪ/CỘNG KHO 
         [HttpPut("status/{id}")]
         [Authorize(Roles = "Admin,Customer")]
         public async Task<IActionResult> UpdateOrderStatus(int id, [FromBody] UpdateStatusDto model)
@@ -211,7 +209,7 @@ namespace BackEnd.Controllers
             if (oldStatus == "Completed") return BadRequest("Đơn hàng đã hoàn thành!");
 
             // ==========================================
-            // LOGIC 1: DUYỆT ĐƠN (Pending -> Confirmed) => TRỪ KHO
+            // LOGIC: DUYỆT ĐƠN (Pending -> Confirmed) => TRỪ KHO
             // ==========================================
             if (oldStatus == "Pending" && newStatus == "Confirmed")
             {
@@ -234,7 +232,7 @@ namespace BackEnd.Controllers
             }
 
             // ==========================================
-            // LOGIC 2: HỦY ĐƠN (Cancelled) => HOÀN KHO
+            // LOGIC: HỦY ĐƠN (Cancelled) => HOÀN KHO
             // ==========================================
             else if (newStatus == "Cancelled")
             {
@@ -272,10 +270,6 @@ namespace BackEnd.Controllers
                 return BadRequest(new { message = "Lỗi Database: " + ex.Message });
             }
         }
-
-        // API 6: KHÁCH HÀNG TỰ HỦY ĐƠN (Đã tích hợp logic hoàn kho vào API 5)
-        // Tuy nhiên giữ lại API này nếu muốn tách biệt quyền hạn, nhưng tốt nhất nên gọi chung API 5
-        // Ở đây mình xóa API Cancel riêng lẻ cũ để dùng chung logic ở trên cho đồng bộ.
     }
 
     // DTO Helper

@@ -7,7 +7,7 @@ namespace BackEnd.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")] // 🔥 Chỉ Admin mới được xem
+    [Authorize(Roles = "Admin")] //Chỉ Admin mới được xem
     public class DashboardController : ControllerBase
     {
         private readonly FashionShopDbContext _context;
@@ -21,12 +21,12 @@ namespace BackEnd.Controllers
         public async Task<IActionResult> GetStats()
         {
             // 1. Tổng doanh thu 
-            // 🔥 LOGIC MỚI: Chỉ tính tổng tiền của các đơn hàng có trạng thái "Completed"
+            // Chỉ tính tổng tiền của các đơn hàng có trạng thái "Completed"
             var totalRevenue = await _context.Orders
                 .Where(o => o.OrderStatus == "Completed")
                 .SumAsync(o => o.TotalAmount);
 
-            // 2. Tổng số đơn hàng (Đếm tất cả các đơn, trừ đơn Hủy nếu muốn, ở đây tôi đếm tất cả để thấy quy mô)
+            // 2. Tổng số đơn hàng (Đếm tất cả các đơn, trừ đơn Hủy nếu muốn)
             var totalOrders = await _context.Orders.CountAsync();
 
             // 3. Tổng số khách hàng (Role = 'Customer')
@@ -56,7 +56,7 @@ namespace BackEnd.Controllers
 
             // 2. Truy vấn dữ liệu biểu đồ
             var rawData = await _context.Orders
-                // 🔥 LOGIC MỚI: Lọc theo thời gian VÀ trạng thái phải là "Completed"
+                // Lọc theo thời gian VÀ trạng thái phải là "Completed"
                 .Where(o => o.OrderDate >= startDate && o.OrderDate <= endDate && o.OrderStatus == "Completed")
                 .GroupBy(o => o.OrderDate.Value.Date)
                 .Select(g => new

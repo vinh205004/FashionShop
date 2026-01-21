@@ -40,7 +40,7 @@ namespace BackEnd.Controllers
         [HttpPost("add")]
         public async Task<IActionResult> AddToCart([FromBody] AddToCartRequest request)
         {
-            // Bước 1: Tìm xem User này đã có giỏ hàng chưa?
+            // Tìm xem User này đã có giỏ hàng chưa?
             var cart = await _context.Carts
                 .Include(c => c.CartItems)
                 .FirstOrDefaultAsync(c => c.UserId == request.UserId);
@@ -53,7 +53,7 @@ namespace BackEnd.Controllers
                 await _context.SaveChangesAsync(); // Lưu để lấy CartId
             }
 
-            // Bước 2: Kiểm tra xem sản phẩm + size này đã có trong giỏ chưa?
+            // Kiểm tra xem sản phẩm + size này đã có trong giỏ chưa?
             var existingItem = cart.CartItems
                 .FirstOrDefault(i => i.ProductId == request.ProductId && i.Size == request.Size);
 
@@ -77,7 +77,7 @@ namespace BackEnd.Controllers
                 _context.CartItems.Add(newItem);
             }
 
-            // Bước 3: Lưu tất cả xuống SQL
+            // Lưu tất cả xuống SQL
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Đã thêm vào giỏ hàng thành công!" });
@@ -95,7 +95,7 @@ namespace BackEnd.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = "Đã xóa sản phẩm" });
         }
-        // API 4: CẬP NHẬT GIỎ HÀNG (Số lượng hoặc Size)
+        // API 4: CẬP NHẬT GIỎ HÀNG 
         // PUT: api/Carts/update
         [HttpPut("update")]
         public async Task<IActionResult> UpdateCartItem([FromBody] UpdateCartRequest request)

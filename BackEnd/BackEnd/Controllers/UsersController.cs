@@ -7,7 +7,7 @@ namespace BackEnd.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")] // 🔥 Bắt buộc phải là Admin mới được vào
+    [Authorize(Roles = "Admin")]
     public class UsersController : ControllerBase
     {
         private readonly FashionShopDbContext _context;
@@ -17,7 +17,7 @@ namespace BackEnd.Controllers
             _context = context;
         }
 
-        // 1. LẤY TẤT CẢ USER (Trừ password ra)
+        // 1. LẤY TẤT CẢ USER (Trừ password)
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
@@ -29,7 +29,7 @@ namespace BackEnd.Controllers
                     u.Username,
                     u.Email,
                     u.PhoneNumber,
-                    u.Role, // "Admin" hoặc "Customer"
+                    u.Role,
                     u.Address,
                     u.CreatedAt
                 })
@@ -45,14 +45,10 @@ namespace BackEnd.Controllers
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null) return NotFound(new { message = "Không tìm thấy người dùng" });
-
-            // (Optional) Chặn không cho xóa chính mình hoặc Admin khác nếu muốn
-            // var currentUserId = int.Parse(User.FindFirst("UserId").Value);
-            // if (user.UserId == currentUserId) return BadRequest("Không thể tự xóa chính mình!");
-
+            var currentUserId = int.Parse(User.FindFirst("UserId").Value);
+            if (user.UserId == currentUserId) return BadRequest("Không thể tự xóa chính mình!");
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
-
             return Ok(new { message = "Đã xóa người dùng thành công" });
         }
 

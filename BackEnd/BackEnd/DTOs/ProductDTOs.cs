@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace BackEnd.DTOs
 {
@@ -11,19 +12,19 @@ namespace BackEnd.DTOs
         [Required]
         public decimal Price { get; set; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         // ID của danh mục đã chọn
         public int CategoryId { get; set; }
-        public int SubCategoryId { get; set; }
+        public int? SubCategoryId { get; set; }
         public int Quantity { get; set; } = 0;
 
         // Các danh sách (Mảng) gửi từ React lên
-        public List<string> Sizes { get; set; }  // ["S", "M", "L"]
-        public List<string> Images { get; set; } // ["url1", "url2"]
-        public List<string> Badges { get; set; } // ["New", "Sale"]
+        public List<string> Sizes { get; set; }  
+        public List<string>? Images { get; set; } 
+        public List<string>? Badges { get; set; } 
+        public IFormFile? ImageFile { get; set; }
     }
 
-    // Sau này nếu cần DTO cho việc Sửa (Update) thì viết tiếp xuống dưới này
-    // public class ProductUpdateDto { ... }
+ 
 }

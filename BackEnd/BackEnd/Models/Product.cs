@@ -17,6 +17,7 @@ public partial class Product
 
     public int? SubCategoryId { get; set; }
     public int Quantity { get; set; } = 0;
+    public bool IsActive { get; set; } = true;
 
     public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
 

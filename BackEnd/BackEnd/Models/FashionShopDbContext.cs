@@ -46,6 +46,35 @@ public partial class FashionShopDbContext : DbContext
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
+        // --- 1. Cấu hình Index cho Bảng Product ---
+
+        // Index cho Tên
+        modelBuilder.Entity<Product>()
+            .HasIndex(p => p.Title)
+            .HasDatabaseName("IX_Products_Title");
+
+        // Index cho Giá 
+        modelBuilder.Entity<Product>()
+            .HasIndex(p => p.Price)
+            .HasDatabaseName("IX_Products_Price");
+
+        // Index cho IsActive 
+        modelBuilder.Entity<Product>()
+            .HasIndex(p => p.IsActive)
+            .HasDatabaseName("IX_Products_IsActive");;
+
+        // --- 2. Cấu hình Index cho Bảng Category ---
+
+        // Index cho CategoryCode
+        modelBuilder.Entity<Category>()
+            .HasIndex(c => c.CategoryCode)
+            .IsUnique(); // Đảm bảo Code là duy nhất
+
+        // Index cho SubCategoryCode
+        modelBuilder.Entity<SubCategory>()
+            .HasIndex(s => s.SubCategoryCode);
         modelBuilder.Entity<Cart>(entity =>
         {
             entity.HasKey(e => e.CartId).HasName("PK__Carts__51BCD7B7DC47D263");

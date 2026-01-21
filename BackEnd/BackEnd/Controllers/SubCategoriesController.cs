@@ -69,7 +69,7 @@ namespace BackEnd.Controllers
             var sub = await _context.SubCategories.FindAsync(id);
             if (sub == null) return NotFound();
 
-            // Xóa liên kết bảng trung gian trước (Cascade thường tự làm, nhưng viết code cho chắc)
+            // Xóa liên kết bảng trung gian trước
             var links = _context.CategorySubCategories.Where(x => x.SubCategoryId == id);
             _context.CategorySubCategories.RemoveRange(links);
 
