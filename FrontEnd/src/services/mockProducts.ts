@@ -8,13 +8,9 @@ export interface ProductMock {
   description?: string;
   images: string[];
   badges?: string[];
-  
-  // 👇 Đã thêm trường số lượng
   quantity: number; 
-
   categoryId: number;      
-  subCategoryId: number;   
-  
+  subCategoryId: number;    
   category?: string;       // Tên danh mục (VD: Nữ)
   subCategory?: string;    // Tên sub (VD: Áo thun)
   sizes?: string[];
@@ -27,10 +23,7 @@ interface BackendProduct {
   title: string;
   price: number;
   description: string;
-  
-  // 👇 Mapping trường số lượng từ API
   quantity: number;
-
   // ID từ backend
   categoryId: number;
   subCategoryId: number;
@@ -73,17 +66,11 @@ const mapToFrontend = (item: BackendProduct): ProductMock => {
     title: item.title,
     price: item.price,
     description: item.description || "",
-    
-    // 👇 Map Quantity
     quantity: item.quantity !== undefined ? item.quantity : 0,
-
-    // MAP ID
     categoryId: item.categoryId,
     subCategoryId: item.subCategoryId,
-
     category: item.category?.categoryName || "",
     subCategory: item.subCategory?.subCategoryName || "", 
-    
     images: sortedImages && sortedImages.length > 0 
             ? sortedImages.map(img => img.imageUrl) 
             : ["https://via.placeholder.com/300?text=No+Image"],
@@ -92,6 +79,9 @@ const mapToFrontend = (item: BackendProduct): ProductMock => {
   };
 };
 
+// Hàm lấy Header Auth
+// Lưu ý: Không cần set 'Content-Type': 'multipart/form-data' thủ công
+// Axios sẽ tự động set kèm theo boundary khi phát hiện body là FormData
 const getAuthHeader = () => {
     const token = localStorage.getItem("token");
     return { headers: { Authorization: `Bearer ${token}` } };
@@ -174,7 +164,7 @@ export const getAllSizes = async (): Promise<string[]> => {
 };
 
 // =========================================================
-// B. CÁC HÀM ADMIN
+// B. CÁC HÀM ADMIN (QUẢN LÝ SẢN PHẨM)
 // =========================================================
 
 export const getAllProducts = async () => {
@@ -214,17 +204,22 @@ export const deleteProduct = async (id: number) => {
     return res.data;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const createProduct = async (productData: any) => {
-    const res = await axios.post(`${API_URL}/create`, productData, getAuthHeader());
+// 👇 SỬA ĐỔI QUAN TRỌNG: Nhận FormData thay vì JSON
+export const createProduct = async (formData: FormData) => {
+    // Axios tự động thêm header 'Content-Type': 'multipart/form-data' khi data là FormData
+    const res = await axios.post(`${API_URL}/create`, formData, getAuthHeader());
     return res.data;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const updateProduct = async (id: number, productData: any) => {
-    const res = await axios.put(`${API_URL}/update/${id}`, productData, getAuthHeader());
+// 👇 SỬA ĐỔI QUAN TRỌNG: Nhận FormData thay vì JSON
+export const updateProduct = async (id: number, formData: FormData) => {
+    const res = await axios.put(`${API_URL}/update/${id}`, formData, getAuthHeader());
     return res.data;
 };
+
+// =========================================================
+// C. CÁC HÀM ADMIN (QUẢN LÝ DANH MỤC)
+// =========================================================
 
 export const createCategory = async (name: string, code: string) => {
     const res = await axios.post(`https://localhost:7248/api/Categories`, { 
@@ -264,7 +259,33 @@ export const deleteSubCategory = async (id: number) => {
     const res = await axios.delete(`https://localhost:7248/api/SubCategories/${id}`, getAuthHeader());
     return res.data;
 };
+// 1. Lấy danh sách thùng rác
+export const getDeletedProducts = async () => {
+    try {
+        const res = await axios.get(`${API_URL}/deleted`, getAuthHeader());
+        // Map dữ liệu về dạng Frontend (tái sử dụng hàm mapToFrontend nếu có, hoặc map thủ công)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return res.data.map((item: any) => ({
+            id: item.productId,
+            title: item.title,
+            price: item.price,
+            // Lấy ảnh đầu tiên hoặc ảnh placeholder
+            image: (item.productImages && item.productImages.length > 0) 
+                   ? item.productImages[0].imageUrl 
+                   : "https://via.placeholder.com/100",
+            category: item.category?.categoryName || "---"
+        }));
+    } catch (error) {
+        console.error("Lỗi lấy thùng rác:", error);
+        return [];
+    }
+};
 
+// 2. Khôi phục sản phẩm
+export const restoreProduct = async (id: number) => {
+    const res = await axios.put(`${API_URL}/restore/${id}`, {}, getAuthHeader());
+    return res.data;
+};
 // Helpers
 export const getProductsByCategory = async (cat: string) => (await getProductsPaged(1, 100, cat)).data;
 export const getProductsBySubCategory = async (sub: string) => (await getProductsPaged(1, 100, "", sub)).data;

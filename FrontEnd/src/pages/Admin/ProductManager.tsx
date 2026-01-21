@@ -14,14 +14,16 @@ import { useToast } from '../../contexts/ToastContext';
 // Import Modal
 import CategoryModal from '../../components/Modals/CategoryModal';
 import ProductModal from '../../components/Modals/ProductModal';
+import DeletedProductsModal from '../../components/Modals/DeletedProductsModal';
 
 const ProductManager = () => {
   const [products, setProducts] = useState<ProductMock[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subCategories, setSubCategories] = useState<SubCategory[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   // State Modal
+  const [isTrashOpen, setIsTrashOpen] = useState(false); // 👇 State mở thùng rác
   const [isCatModalOpen, setIsCatModalOpen] = useState(false);
   const [isProdModalOpen, setIsProdModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<ProductMock | null>(null);
@@ -56,15 +58,20 @@ const ProductManager = () => {
   };
 
   const handleDelete = async (id: number) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa?")) {
+    if (window.confirm("Bạn có chắc chắn muốn xóa? Sản phẩm sẽ được chuyển vào thùng rác.")) {
       try {
         await deleteProduct(id);
-        addToast("Đã xóa", "success");
+        addToast("Đã chuyển vào thùng rác", "success");
         fetchData(); 
       } catch  {
         addToast("Lỗi xóa", "error");
       }
     }
+  };
+
+  // 👇 Hàm callback khi khôi phục xong
+  const handleRestoreSuccess = () => {
+      fetchData(); // Load lại danh sách sản phẩm đang hoạt động
   };
 
   const filteredProducts = products.filter(p => {
@@ -85,6 +92,13 @@ const ProductManager = () => {
         productToEdit={editingProduct} 
       />
       
+      {/* 👇 Render Modal Thùng Rác */}
+      <DeletedProductsModal 
+        isOpen={isTrashOpen}
+        onClose={() => setIsTrashOpen(false)}
+        onRestoreSuccess={handleRestoreSuccess}
+      />
+      
       {/* HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-xl shadow-sm border border-gray-100">
         <div>
@@ -92,8 +106,17 @@ const ProductManager = () => {
            <p className="text-sm text-gray-500">Tổng: {filteredProducts.length} sản phẩm</p>
         </div>
         <div className="flex gap-3">
+            {/* 👇 Nút mở thùng rác */}
+            <button 
+                onClick={() => setIsTrashOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition font-medium"
+                title="Xem thùng rác"
+            >
+                <Trash2 size={18} /> <span className="hidden sm:inline">Thùng rác</span>
+            </button>
+
             <button onClick={() => setIsCatModalOpen(true)} className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700 transition font-medium">
-                <FolderPlus size={18} /> <span>Thêm danh mục</span>
+                <FolderPlus size={18} /> <span className="hidden sm:inline">Thêm danh mục</span>
             </button>
             <button onClick={handleOpenAdd} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-md transition font-medium">
                 <PackagePlus size={18} /> <span>Thêm sản phẩm</span>
@@ -124,7 +147,7 @@ const ProductManager = () => {
           {filteredProducts.map((product) => (
             <div key={product.id} className="group bg-white rounded-xl border border-gray-100 p-3 shadow-sm hover:shadow-md transition-all flex items-center gap-4">
               <div className="w-24 h-24 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden border">
-                <img src={product.images[0] || "https://via.placeholder.com/150"} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                <img src={(product.images && product.images.length > 0) ? product.images[0] : "https://via.placeholder.com/150"} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
               </div>
 
               <div className="flex-1 min-w-0">
